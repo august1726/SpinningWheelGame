@@ -27,9 +27,13 @@ if (!variable_instance_exists(id, "button_text"))
 {
 	button_text = "Play"
 }
-if (!variable_instance_exists(id, "room_dest")) {
+
+if (room == rm_start_menu) {
 	room_dest = rm_howto;
+} else {
+	room_dest = rm_game;
 }
+
 
 if (room == rm_lose) {
 	music = snd_mus_lose;
