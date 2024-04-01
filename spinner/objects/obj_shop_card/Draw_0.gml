@@ -4,6 +4,7 @@ if (position_meeting(mouse_x, mouse_y, id)) {
 	if (item != noone) { obj_item_descr.text = item.descr; }
 	if (mouse_check_button_pressed(mb_left)) {
 		if (item != noone and player.coins >= item.price and array_contains(player.inventory, noone)) {
+			audio_play_sound(snd_buy, 10, false)
 			player.coins -= item.price;
 			array_set(space_inventory, array_get_index(space_inventory, item), noone)
 			array_set(player.inventory, array_get_index(player.inventory, noone), item)

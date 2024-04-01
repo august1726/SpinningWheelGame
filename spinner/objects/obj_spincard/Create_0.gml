@@ -3,7 +3,7 @@
 #macro GOLD_MAX 4
 #macro HEAL_MAX 2
 #macro NUM_START_SPACES 5
-#macro WIN_THRESHOLD 15
+#macro WIN_THRESHOLD 40
 #macro UNIT 32
 randomise()
 

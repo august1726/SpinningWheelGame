@@ -92,7 +92,8 @@ function spin(){
 		    shop_card[_i].item = noone;
 		}
 	
-	alarm[0] = fps*2;
+	alarm[0] = game_get_speed(gamespeed_fps)*2;
+	audio_play_sound(snd_spinners, 10, false);
 	state = STATES.WAIT;
 }
 
@@ -102,12 +103,12 @@ function wait() {
 
 function win(){
 	in_play = false;
-	alarm[1] = fps*1;
+	alarm[1] = game_get_speed(gamespeed_fps)*1;
 	state = STATES.WAIT;
 }
 
 function death(){
 	in_play = false;
-	alarm[2] = fps*1;
+	alarm[2] = game_get_speed(gamespeed_fps)*1;
 	state = STATES.WAIT;
 }

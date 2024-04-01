@@ -4,6 +4,7 @@ if (position_meeting(mouse_x, mouse_y, id)) {
 	if (item != noone) { obj_item_descr.text = item.descr; }
 	if (mouse_check_button_pressed(mb_left)) {
 		if (item != noone and obj_spincard.state = STATES.PLAYER_TURN) {
+			audio_play_sound(snd_use, 10, false)
 			obj_spincard.use_item(i);
 			item = noone;
 		}

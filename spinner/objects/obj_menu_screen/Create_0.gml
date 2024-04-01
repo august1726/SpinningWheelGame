@@ -28,7 +28,7 @@ if (!variable_instance_exists(id, "button_text"))
 	button_text = "Play"
 }
 if (!variable_instance_exists(id, "room_dest")) {
-	room_dest = rm_game;
+	room_dest = rm_howto;
 }
 
 if (room == rm_lose) {
