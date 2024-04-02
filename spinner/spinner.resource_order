@@ -1,5 +1,5 @@
 {
-  "FolderOrderSettings": [
+  "FolderOrderSettings":[
     {"name":"Fonts","order":7,"path":"folders/Fonts.yy",},
     {"name":"Objects","order":9,"path":"folders/Objects.yy",},
     {"name":"gameplay_ui","order":8,"path":"folders/Objects/gameplay_ui.yy",},
@@ -10,7 +10,7 @@
     {"name":"Sprites","order":1,"path":"folders/Sprites.yy",},
     {"name":"icons","order":3,"path":"folders/Sprites/icons.yy",},
   ],
-  "ResourceOrderSettings": [
+  "ResourceOrderSettings":[
     {"name":"obj_menu_screen","order":1,"path":"objects/obj_menu_screen/obj_menu_screen.yy",},
     {"name":"powerups","order":3,"path":"scripts/powerups/powerups.yy",},
     {"name":"obj_turndisp","order":6,"path":"objects/obj_turndisp/obj_turndisp.yy",},
