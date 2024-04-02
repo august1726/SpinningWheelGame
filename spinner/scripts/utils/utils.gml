@@ -24,7 +24,7 @@ function get_random_space(_space1, _space2) {
 };
 
 function draw_how_to_play(_x1 = room_width/30, _y1 = room_height/12, _x2 = room_width - _x1, _y2 = room_height - _y1) {
-	static howto_text = "Click on a colored space on the wheel to start\nYou can move to adjacent spaces every turn\nSpaces you can move to are shown lighter than spaces you cannot move to\nHover over different spaces and power-ups to see what properties they have.\nPlayers can buy power-ups when on their space\nPrices of new power-ups are dependent on turn number and player's wealth.\nPower-ups and coins spawn on the space where a pointer lands\nIf a pointer lands on the player's space, they take 1 damage (per pointer)\nIf you reach 0 health, you lose\nIf you reach 30 rounds, you win\nThere is 1 pointer to begin with, and an additional pointer is added every 5 rounds"
+	static howto_text = "Click on a colored space on the wheel to start\nYou can move to adjacent spaces every turn\nSpaces you can move to are shown lighter than spaces you cannot move to\nHover over different spaces and power-ups to see what properties they have\nPlayers can buy power-ups when on their space\nPrices of new power-ups are dependent on turn number and player's wealth\nPower-ups and coins spawn on the space where a pointer lands\nIf a pointer lands on the player's space, they take 1 damage (per pointer)\nIf you reach 0 health, you lose\nIf you reach turn 30, you win\nThere is 1 pointer to begin with, and an additional pointer is added every 5 rounds"
 	draw_roundrect_color(_x1, _y1, _x2, _y2, c_white, c_white, false)
 	draw_set_halign(fa_center)
 	draw_set_valign(fa_middle)
