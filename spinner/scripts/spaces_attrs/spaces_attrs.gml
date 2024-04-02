@@ -47,6 +47,7 @@ function RedSpace() : Space() constructor {
 	descr = "Red Space\ntake damage upon entering. gold drops on this square doubled."
 	static player_action = function(_player) {
 		lives -= 1;
+		audio_play_sound(snd_hurt, 10, false)
 	}
 	
 	static pointer_action = function() {
@@ -88,6 +89,7 @@ function GreenSpace() : Space() constructor {
 	static player_action = function(_player) {
 		if (lives <= HEAL_MAX) {
 			lives += 1;
+			audio_play_sound(snd_heal, 10, false);
 		}
 	}
 }

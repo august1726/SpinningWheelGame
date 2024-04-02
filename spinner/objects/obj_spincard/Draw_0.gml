@@ -52,7 +52,6 @@ for (var _space = 0; _space < array_length(spaces); _space++) {
 	draw_text(_coin_x, _coin_y, string(space.coins));
 	
 	draw_set_color(c_white)
-	draw_text(obj_coin_text.x, obj_coin_text.y, string("Coins: {0}   Lives: {1}", player.coins, lives))
 	
 	if(array_contains(warning_list, _space) and state = STATES.PLAYER_TURN) {
 		var _warning_dir = section * (_space + .25)
@@ -76,6 +75,18 @@ for (var _space = 0; _space < array_length(spaces); _space++) {
 		}
 	}
 }
+
+draw_set_color(c_yellow)
+draw_text(obj_coin_text.x, obj_coin_text.y, string("Coins: {0}", player.coins))
+
+if (lives <= 1) {
+	draw_set_color(c_red)	
+} else if (lives == 2) {
+	draw_set_color(c_yellow)	
+} else {
+	draw_set_color(c_lime)
+}
+draw_text(obj_lives_text.x, obj_lives_text.y, string("Lives: {0}", lives))
 
 draw_set_color(c_white)
 

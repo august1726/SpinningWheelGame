@@ -84,6 +84,9 @@ function spin(){
 		spaces[_space_idx].stock_items(items_list);
 		if (player.space == _space_idx) {
 			lives--;
+			if (!audio_is_playing(snd_hurt)) {
+				audio_play_sound(snd_hurt, 10, false)	
+			}
 		}
 		
 	}
