@@ -22,6 +22,7 @@ for (var _i = 0; _i < NUM_START_SPACES; _i++) {
 }
 
 space = noone;
+mouse_space = 0;
 
 num_lines = 360*1.5;
 line_length = 5.5*UNIT

@@ -21,16 +21,19 @@ for (var _space = 0; _space < array_length(spaces); _space++) {
 	
 	//	draw_line_width_color(x, y, _x2, _y2, 2, _col, _col);
 	//}
-	var _x1 = x + lengthdir_x(line_length, round(section*_space))
-	var _y1 = y + lengthdir_y(line_length, round(section*_space ) )
-	var _x2 = x + lengthdir_x(line_length, round(section*(_space+1)))
-	var _y2 = y + lengthdir_y(line_length, round(section*(_space+1)))
+	var _x1 = x + lengthdir_x(line_length, section*_space)
+	var _y1 = y + lengthdir_y(line_length, section*_space )
+	var _x2 = x + lengthdir_x(line_length, section*(_space+1))
+	var _y2 = y + lengthdir_y(line_length, section*(_space+1))
 	
 	var _col = space.color
 	if (get_wrap_dist(player.space, _space, array_length(spaces)) > player.movement and state != STATES.CHOOSE_START) {
 		_col = space.shifted_color
 	}
 	draw_triangle_color(x, y, _x1, _y1, _x2, _y2, _col, _col, _col, false);
+	if (point_in_triangle(mouse_x, mouse_y, x, y, _x1, _y1, _x2, _y2)) {
+		mouse_space = _space;
+	}
 	
 	
 	draw_set_alpha(1);
@@ -92,7 +95,9 @@ draw_set_color(c_white)
 
 if (state == STATES.WAIT and in_play) {
 	for (var _i = 0; _i < array_length(pointer_dirs); _i++) {
-		draw_sprite_ext(spr_pointer, 0, x, y, 1, 1, pointer_dirs[_i], c_white, 1);
+		var _col = c_white
+		//var _col = make_color_hsv(0, 0, lerp(50, 100,  _i/(array_length(pointer_dirs)-1)))
+		draw_sprite_ext(spr_pointer, 0, x, y, 1, 1, pointer_dirs[_i], _col, 1);
 	}
 }
 
@@ -120,7 +125,7 @@ draw_text(obj_invsign.x + obj_invsign.sprite_width/2, obj_invsign.y + obj_invsig
 mouse_dist = point_distance(x, y, mouse_x, mouse_y);
 if (sprite_width/2 < mouse_dist and mouse_dist < line_length) {
 	var _dir = point_direction(x, y, mouse_x, mouse_y)
-	var _hover_descr = spaces[clamp(_dir div section, 0, array_length(spaces)-1)].descr
+	var _hover_descr = spaces[mouse_space].descr
 	obj_space_descr.text = _hover_descr;
-	obj_space_descr.col = spaces[clamp(_dir div section, 0, array_length(spaces)-1)].color
+	obj_space_descr.col = spaces[mouse_space].color
 }
