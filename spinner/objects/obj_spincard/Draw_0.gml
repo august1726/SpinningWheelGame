@@ -1,7 +1,7 @@
 draw_set_color(c_white)
-draw_circle(x, y, line_length, false);
+draw_circle(x, y, LINE_LENGTH, false);
 draw_set_color(c_black)
-draw_circle(x, y, line_length-UNIT, false);
+draw_circle(x, y, LINE_LENGTH-UNIT, false);
 draw_set_color(c_white)
 
 
@@ -10,21 +10,10 @@ for (var _space = 0; _space < array_length(spaces); _space++) {
 	// draw_color segment
 	space = spaces[_space];
 	
-	//for (var _dir = section*_space; _dir < section*(_space+1); _dir += section/num_lines) {
-	//	var _x2 = x + lengthdir_x(line_length, _dir)
-	//	var _y2 = y + lengthdir_y(line_length, _dir)
-	
-	//	var _col = space.color
-	//	if (get_wrap_dist(player.space, _space, array_length(spaces)) > player.movement and state != STATES.CHOOSE_START) {
-	//		_col = space.shifted_color
-	//	}
-	
-	//	draw_line_width_color(x, y, _x2, _y2, 2, _col, _col);
-	//}
-	var _x1 = x + lengthdir_x(line_length, section*_space)
-	var _y1 = y + lengthdir_y(line_length, section*_space )
-	var _x2 = x + lengthdir_x(line_length, section*(_space+1))
-	var _y2 = y + lengthdir_y(line_length, section*(_space+1))
+	var _x1 = x + lengthdir_x(LINE_LENGTH, section*_space)
+	var _y1 = y + lengthdir_y(LINE_LENGTH, section*_space )
+	var _x2 = x + lengthdir_x(LINE_LENGTH, section*(_space+1))
+	var _y2 = y + lengthdir_y(LINE_LENGTH, section*(_space+1))
 	
 	var _col = space.color
 	if (get_wrap_dist(player.space, _space, array_length(spaces)) > player.movement and state != STATES.CHOOSE_START) {
@@ -39,8 +28,8 @@ for (var _space = 0; _space < array_length(spaces); _space++) {
 	draw_set_alpha(1);
 
 	//var _dir = section * (_space + .5)
-	//var _x2 = x + lengthdir_x(line_length, _dir)
-	//var _y2 = y + lengthdir_y(line_length, _dir)
+	//var _x2 = x + lengthdir_x(LINE_LENGTH, _dir)
+	//var _y2 = y + lengthdir_y(LINE_LENGTH, _dir)
 	//var _col = c_black
 	//draw_line_width_color(x, y, _x2, _y2, 3, _col, _col);
 	
@@ -95,8 +84,12 @@ draw_set_color(c_white)
 
 if (state == STATES.WAIT and in_play) {
 	for (var _i = 0; _i < array_length(pointer_dirs); _i++) {
-		var _col = c_white
-		//var _col = make_color_hsv(0, 0, lerp(50, 100,  _i/(array_length(pointer_dirs)-1)))
+		
+		var _col = make_color_hsv(0, 0, lerp(127, 255,  (1-_i/(array_length(pointer_dirs)-1)) ))
+		if (array_length(pointer_dirs) == 1) {
+			_col = c_white
+		}
+		
 		draw_sprite_ext(spr_pointer, 0, x, y, 1, 1, pointer_dirs[_i], _col, 1);
 	}
 }
@@ -123,7 +116,7 @@ draw_text(obj_shopsign.x + obj_shopsign.sprite_width/2, obj_shopsign.y + obj_sho
 draw_text(obj_invsign.x + obj_invsign.sprite_width/2, obj_invsign.y + obj_invsign.sprite_height/2, string("Inventory"));
 
 mouse_dist = point_distance(x, y, mouse_x, mouse_y);
-if (sprite_width/2 < mouse_dist and mouse_dist < line_length) {
+if (sprite_width/2 < mouse_dist and mouse_dist < LINE_LENGTH) {
 	var _dir = point_direction(x, y, mouse_x, mouse_y)
 	var _hover_descr = spaces[mouse_space].descr
 	obj_space_descr.text = _hover_descr;

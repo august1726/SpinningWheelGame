@@ -3,7 +3,7 @@
 function choose_start(){
 	if mouse_check_button_pressed(mb_left) {
 		mouse_dist = point_distance(x, y, mouse_x, mouse_y);
-		if (sprite_width/2 < mouse_dist and mouse_dist < line_length) {
+		if (sprite_width/2 < mouse_dist and mouse_dist < LINE_LENGTH) {
 			player.space = mouse_space;
 			state = STATES.INITIATE_TURN;
 		}
@@ -49,7 +49,7 @@ function initiate_turn() {
 
 function show_pointers() {
 	for (var _i = 0; _i < array_length(pointer_dirs); _i++) {
-		var _space_idx = clamp(pointer_dirs[_i] div section, 0, array_length(spaces)-1)
+		var _space_idx = get_triangle_space(pointer_dirs[_i], section, array_length(spaces)) //clamp(pointer_dirs[_i] div section, 0, array_length(spaces)-1)
 		if (!array_contains(warning_list, _space_idx) and random(1) < player.sight_prob) {
 			array_push(warning_list, _space_idx);
 		}
@@ -60,7 +60,7 @@ function player_turn(){
 	
 	if mouse_check_button_pressed(mb_left) {
 		mouse_dist = point_distance(x, y, mouse_x, mouse_y);
-		if (sprite_width/2 < mouse_dist and mouse_dist < line_length) {
+		if (sprite_width/2 < mouse_dist and mouse_dist < LINE_LENGTH) {
 			var _spaces_away = get_wrap_dist(player.space, mouse_space, array_length(spaces))
 			//show_debug_message("player: {0}, click: {1}, dist: {2}", player.space, _clicked_space, _spaces_away)
 			if (_spaces_away != 0 and _spaces_away <= player.movement) {
@@ -74,7 +74,8 @@ function player_turn(){
 
 function spin(){
 	for (var _i = 0; _i < array_length(pointer_dirs); _i++) {
-		var _space_idx = clamp(pointer_dirs[_i] div section, 0, array_length(spaces)-1)
+		var _space_idx = get_triangle_space(pointer_dirs[_i], section, array_length(spaces)) //clamp(pointer_dirs[_i] div section, 0, array_length(spaces)-1)
+		show_debug_message(_space_idx)
 		spaces[_space_idx].pointer_action();
 		spaces[_space_idx].stock_items(items_list);
 		if (player.space == _space_idx) {

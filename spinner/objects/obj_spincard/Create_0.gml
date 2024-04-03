@@ -5,6 +5,7 @@
 #macro NUM_START_SPACES 5
 #macro WIN_THRESHOLD 30
 #macro UNIT 32
+#macro LINE_LENGTH (5.5*UNIT)
 randomise()
 
 spaces_list = [RedSpace, OrangeSpace, YellowSpace, GreenSpace, BlueSpace, PurpleSpace]
@@ -25,7 +26,6 @@ space = noone;
 mouse_space = 0;
 
 num_lines = 360*1.5;
-line_length = 5.5*UNIT
 section = 360 / array_length(spaces)
 pointer_dirs = array_create(1)
 warning_list = [];
