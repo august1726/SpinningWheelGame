@@ -99,7 +99,7 @@ if (state != STATES.CHOOSE_START and state != STATES.DEATH) {
 	var _player_x = x + lengthdir_x(SPACING*2, _player_dir)
 	var _player_y = y + lengthdir_y(SPACING*2, _player_dir)
 	
-	draw_sprite(spr_player, 0, _player_x, _player_y)
+	draw_sprite(spr_player, (lives <= 0), _player_x, _player_y)
 	var _w = sprite_get_width(spr_player)
 	if (point_in_rectangle(mouse_x, mouse_y, _player_x-_w, _player_y-_w, _player_x+_w, _player_y+_w)) {
 		obj_item_descr.text = "Player\n This is you!"
