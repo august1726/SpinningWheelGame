@@ -3,13 +3,13 @@
 #macro GOLD_MAX 4
 #macro HEAL_MAX 2
 #macro NUM_START_SPACES 5
-#macro WIN_THRESHOLD 30
+#macro WIN_THRESHOLD 100
 #macro UNIT 32
 #macro LINE_LENGTH (5.5*UNIT)
 randomise()
 
-spaces_list = [RedSpace, OrangeSpace, YellowSpace, GreenSpace, BlueSpace, PurpleSpace]
-items_list = [HealthUp, AddSpace, AddSpace, Jetpack, Vision, Reroll, Delay];
+spaces_list = [RedSpace, OrangeSpace, YellowSpace, GreenSpace, BlueSpace, PurpleSpace, GreySpace, HospitalSpace]
+items_list = [HealthUp, AddSpace, AddSpace, Jetpack, Vision, Reroll, Delay, Blight];
 start_types = array_shuffle(spaces_list);
 array_resize(start_types, NUM_START_SPACES)
 
@@ -18,7 +18,7 @@ in_play = true
 
 spaces = array_create(NUM_START_SPACES)
 for (var _i = 0; _i < NUM_START_SPACES; _i++) {
-	spaces[_i] = new start_types[_i](_i);
+	spaces[_i] = new start_types[_i]();
 	spaces[_i].stock_items();
 }
 
@@ -58,9 +58,23 @@ function calibrate_inventory() {
 }
 
 function use_item(_i) {
-	player.inventory[_i].use_action(player, spaces);
-	array_set(player.inventory, _i, noone)
+	var _item_used = false;
+	if (!is_instanceof(spaces[player.space], GreySpace)) {
+		player.inventory[_i].use_action(player, spaces);
+		_item_used = true;
+	} else {
+		if (is_struct(player.inventory[_i]) and is_instanceof(player.inventory[_i], Blight)) {
+			_item_used = true;
+		}
+	}
+	
+	if (_item_used) {
+		audio_play_sound(snd_use, 10, false)
+		array_set(player.inventory, _i, noone)	
+	}
+	
 	show_debug_message(player.inventory);
+	return _item_used;
 }
 
 enum STATES {
@@ -80,7 +94,7 @@ state = STATES.CHOOSE_START;
 function show_pointers() {
 	warning_list = []
 	for (var _i = 0; _i < array_length(pointer_dirs); _i++) {
-		var _space_idx = pointer_dirs[_i] div section
+		var _space_idx = get_triangle_space(pointer_dirs[_i], section, array_length(spaces))
 		if (!array_contains(warning_list, _space_idx) and random(1) < player.sight_prob) {
 			array_push(warning_list, _space_idx);
 		}

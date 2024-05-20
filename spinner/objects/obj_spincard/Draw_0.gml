@@ -45,6 +45,7 @@ for (var _space = 0; _space < array_length(spaces); _space++) {
 	
 	draw_set_color(c_white)
 	
+	// 
 	if(array_contains(warning_list, _space) and state = STATES.PLAYER_TURN) {
 		var _warning_dir = section * (_space + .25)
 		var _warning_x = x + lengthdir_x(SPACING*3, _warning_dir)

@@ -76,15 +76,14 @@ function spin(){
 	for (var _i = 0; _i < array_length(pointer_dirs); _i++) {
 		var _space_idx = get_triangle_space(pointer_dirs[_i], section, array_length(spaces)) //clamp(pointer_dirs[_i] div section, 0, array_length(spaces)-1)
 		show_debug_message(_space_idx)
-		spaces[_space_idx].pointer_action();
 		spaces[_space_idx].stock_items(items_list);
+		spaces[_space_idx].pointer_action();
 		if (player.space == _space_idx) {
 			lives--;
 			if (!audio_is_playing(snd_hurt)) {
 				audio_play_sound(snd_hurt, 10, false)	
 			}
 		}
-		
 	}
 	for (var _i = 0; _i < instance_number(obj_shop_card); ++_i;)
 		{

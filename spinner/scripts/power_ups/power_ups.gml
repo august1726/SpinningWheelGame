@@ -1,9 +1,11 @@
 // Script assets have changed for v2.3.0 see
 // https://help.yoyogames.com/hc/en-us/articles/360005277377 for more information
-function Item() constructor {
+function Item(_free) constructor {
 	spr = spr_health;
 	descr = "Item"
-	if (obj_spincard.turn_num == 0) {
+	if (_free) {
+		price = 0;
+	} else if (obj_spincard.turn_num == 0) {
 		price = 3;
 	} else {
 		price = 3 + (floor(obj_spincard.turn_num/3 + obj_spincard.player.coins/5));
@@ -13,16 +15,16 @@ function Item() constructor {
 	}
 }
 
-function HealthUp() : Item() constructor {
+function HealthUp(_free) : Item(_free) constructor {
 	spr = spr_health;
-	descr = string("Health, Price: {0}\nheal 1 health", price)
+	descr = string("Health, Price: {0}\n+1 health", price)
 	use_action = function(_player, _spaces) {
 		show_debug_message("Health")
 		lives++;
 	}
 }
 
-function AddSpace() : Item() constructor {
+function AddSpace(_free) : Item(_free) constructor {
 	spr = spr_add;
 	descr = string("Plus, Price: {0}\nadd a space to the board", price);
 	use_action = function(_player, _spaces) {
@@ -44,7 +46,7 @@ function AddSpace() : Item() constructor {
 	}
 }
 
-function Jetpack() : Item() constructor {
+function Jetpack(_free) : Item(_free) constructor {
 	spr = spr_jetpack;
 	descr = string("Jetpack, Price: {0}\ntravel anywhere on the board", price);
 	use_action = function(_player, _spaces) {
@@ -53,7 +55,7 @@ function Jetpack() : Item() constructor {
 	}
 }
 
-function Vision() : Item() constructor {
+function Vision(_free) : Item(_free) constructor {
 	spr = spr_eyes;
 	descr = string("Vision, Price: {0}\nsee all dangerous spaces", price);
 	use_action = function(_player, _spaces) {
@@ -63,7 +65,7 @@ function Vision() : Item() constructor {
 	}
 }
 
-function Reroll() : Item() constructor {
+function Reroll(_free) : Item(_free) constructor {
 	spr = spr_reroll;
 	descr = string("Reroll, Price: {0}\nrandomize adjacent spaces. coins are kept.", price);
 	use_action = function(_player, _spaces) {
@@ -89,11 +91,21 @@ function Reroll() : Item() constructor {
 	}
 }
 
-function Delay() : Item() constructor {
+function Delay(_free) : Item(_free) constructor {
 	spr = spr_delay;
-	descr = string("Delay, Price: {0}\nincrease turns till next pointer by 1.", price);
+	descr = string("Delay, Price: {0}\n delay next ptr add by 1-2 turns.", price);
 	use_action = function(_player, _spaces) {
 		show_debug_message("Delay")
-		_player.next_ptr++;
+		_player.next_ptr += irandom_range(1, 2);
+	}
+}
+
+function Blight(_free) : Item(_free) constructor {
+	spr = spr_blight;
+	price = 0;
+	descr = string("Blight\n -1 health. no effect if used on grey space");
+	use_action = function(_player, _spaces) {
+		show_debug_message("Blight")
+		lives--;
 	}
 }

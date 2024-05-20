@@ -1,2 +1,2 @@
-title = "You didn't lose!";
+title = "You win!";
 button_text = "Play again"

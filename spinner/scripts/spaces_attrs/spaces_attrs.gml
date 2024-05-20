@@ -23,27 +23,15 @@ function Space() constructor {
 		for (var _i = 0; _i < array_length(items); _i++) {
 			if(items[_i] == noone) {
 				var _item_type = obj_spincard.items_list[irandom_range(0, array_length(obj_spincard.items_list)-1)];
-				items[_i] = new _item_type();
+				items[_i] = new _item_type(is_instanceof(self, OrangeSpace));
 			}
 		}
-	}
-}
-
-function GreySpace() : Space() constructor {
-	color = c_grey;
-	type = 7;
-	shifted_color = shift_val(color);
-	descr = "Neutral Space"
-	static pointer_action = function() {
-		coins += irandom_range(GOLD_MIN, GOLD_MAX)
-		
 	}
 }
 
 function RedSpace() : Space() constructor {
 	color = c_red;
 	shifted_color = shift_val(color);
-	type = 0;
 	descr = "Red Space\ntake damage upon entering. gold drops on this square doubled."
 	static player_action = function(_player) {
 		lives -= 1;
@@ -58,17 +46,9 @@ function RedSpace() : Space() constructor {
 function OrangeSpace() : Space() constructor {
 	color = c_orange;
 	shifted_color = shift_val(color);
-	num_items = 0;
+	num_items = 1;
 	items = array_create(num_items, noone)
-	descr = "Orange Space\nobtain a free item. gold drops on this square halved."
-	static player_action = function(_player) {
-		if (array_contains(_player.inventory, noone)) {
-			var _item_type = obj_spincard.items_list[irandom_range(0, array_length(obj_spincard.items_list)-1)];
-			var _new_item = new _item_type();
-			array_set(_player.inventory, array_get_index(_player.inventory, noone), _new_item)
-			obj_spincard.calibrate_inventory();
-		}
-	}
+	descr = "Orange Space\ncontains a free item. gold drops on this square halved."
 	static pointer_action = function() {
 		coins += irandom_range(GOLD_MIN/2, GOLD_MAX/2);
 	}
@@ -109,5 +89,27 @@ function PurpleSpace() : Space() constructor {
 	descr = "Purple Space\ntravel up to 2 adjacent spaces, rather than just 1"
 	static player_action = function(_player) {
 		_player.movement = 2;
+	}
+}
+
+function GreySpace() : Space() constructor {
+	color = c_grey;
+	shifted_color = shift_val(color);
+	descr = "Disable Space:\n Only blight can be used on this space."
+}
+
+function HospitalSpace() : Space() constructor {
+	color = c_olive;
+	shifted_color = shift_val(color);
+	descr = "Hospital Space:\n Gives a blight (damage 1), then a heart (heal 1) to player."
+	static player_action = function(_player) {
+		if (array_contains(_player.inventory, noone)) {
+			array_set(_player.inventory, array_get_index(_player.inventory, noone), new Blight(true))
+		}
+		
+		if (array_contains(_player.inventory, noone)) {
+			array_set(_player.inventory, array_get_index(_player.inventory, noone), new HealthUp(true))
+		}
+		obj_spincard.calibrate_inventory();
 	}
 }
