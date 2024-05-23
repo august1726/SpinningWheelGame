@@ -103,9 +103,36 @@ function Delay(_free) : Item(_free) constructor {
 function Blight(_free) : Item(_free) constructor {
 	spr = spr_blight;
 	price = 0;
-	descr = string("Blight\n -1 health. no effect if used on grey space");
+	descr = string("Blight\n-1 health. no effect if used on grey space");
 	use_action = function(_player, _spaces) {
 		show_debug_message("Blight")
-		lives--;
+		_player.take_damage();
+		if (lives <= 0)
+				obj_spincard.state = STATES.DEATH;
+	}
+}
+
+function Intangible(_free) : Item(_free) constructor {
+	spr = spr_intangible;
+	intangible_length = 2;
+	descr = string("Intangible, Price: {0}\ntake no damage for 2 turns.\ndestroy every other intangible", price);
+	use_action = function(_player, _spaces) {
+		show_debug_message("Intangible")
+		_player.intangible += intangible_length;
+		for (var _i = 0; _i < array_length(_spaces); _i++) {
+			if (is_instanceof(_spaces[_i], IntangibleSpace)) {
+				_spaces[_i].items[0] = noone;
+			}
+		}
+		
+		obj_spincard.calibrate_shop();
+		
+		for (var _i = 0; _i < array_length(_player.inventory); _i++) {
+			if (is_instanceof(_player.inventory[_i], Intangible)) {
+				_player.inventory[_i] = noone;
+			}
+		}
+		
+		obj_spincard.calibrate_inventory();
 	}
 }

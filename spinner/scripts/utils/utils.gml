@@ -9,6 +9,10 @@ function get_wrap_dist(_a, _b, _n) {
 	}
 }
 
+function is_even(_num) {
+	return (_num mod 2 == 0);
+}
+
 function shift_val(_col) {
 	return make_color_hsv(color_get_hue(_col), color_get_saturation(_col), color_get_value(_col) / 3);
 }
@@ -36,18 +40,19 @@ function draw_how_to_play(_x1 = room_width/30, _y1 = room_height/12, _x2 = room_
 
 function get_triangle_space(_dir, _section, _num_spaces) {
 	
-	var _point_x = x + lengthdir_x(sprite_get_width(spr_pointer), _dir)
-	var _point_y = y + lengthdir_y(sprite_get_width(spr_pointer), _dir)
+	var _point_x = x + lengthdir_x(UNIT, _dir)
+	var _point_y = y + lengthdir_y(UNIT, _dir)
 	
 	for (var _space = 0; _space < _num_spaces; _space++) {
-		var _x1 = x + lengthdir_x(LINE_LENGTH, _section*_space)
-		var _y1 = y + lengthdir_y(LINE_LENGTH, _section*_space)
-		var _x2 = x + lengthdir_x(LINE_LENGTH, _section*(_space+1))
-		var _y2 = y + lengthdir_y(LINE_LENGTH, _section*(_space+1))
+		var _x1 = x + lengthdir_x(LINE_LENGTH/2, _section*_space)
+		var _y1 = y + lengthdir_y(LINE_LENGTH/2, _section*_space)
+		var _x2 = x + lengthdir_x(LINE_LENGTH/2, _section*(_space+1))
+		var _y2 = y + lengthdir_y(LINE_LENGTH/2, _section*(_space+1))
 		
 		if (point_in_triangle(_point_x, _point_y, x, y, _x1, _y1, _x2, _y2)) {
+			show_debug_message(_space);
 			return _space;
 		}
 	}
-	return 0;
+	return 0
 }

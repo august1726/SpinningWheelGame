@@ -12,7 +12,7 @@ function choose_start(){
 
 function initiate_turn() {
 	turn_num++;
-	if (turn_num >= WIN_THRESHOLD) {
+	if (turn_num >= win_threshold) {
 		state = STATES.WIN;
 	} else {
 		player.next_ptr--;
@@ -24,19 +24,18 @@ function initiate_turn() {
 			state = STATES.DEATH;
 		} else {
 			player.reset_movement();
+			player.subtract_intangible();
 			player.sight_prob = 0;
 			warning_list = []
 			spaces[player.space].collect_coins(player);
 			spaces[player.space].player_action(player);
+			player.use_repeats(player, spaces);
 			for (var _i = 0; _i < array_length(pointer_dirs); _i++) {
 				pointer_dirs[_i] = irandom_range(0, array_length(spaces)-1)*section + section/2 + random_range(-1, 1)*section/6
 			}
 			obj_spincard.show_pointers();
 		
-			for (var _i = 0; _i < spaces[player.space].num_items; _i++ ) {
-				shop_card[_i].item = spaces[player.space].items[_i]
-				shop_card[_i].space_inventory = spaces[player.space].items
-			}
+			calibrate_shop();
 		
 			if (lives <= 0) {
 				state = STATES.DEATH;
@@ -69,6 +68,10 @@ function player_turn(){
 			}
 		}
 	}
+	
+	if mouse_check_button_pressed(mb_right) {
+		addspace.use_action(player, spaces);	
+	}
 }
 
 
@@ -78,11 +81,9 @@ function spin(){
 		show_debug_message(_space_idx)
 		spaces[_space_idx].stock_items(items_list);
 		spaces[_space_idx].pointer_action();
+		show_debug_message("Player: {0}, Pointer: {1}, Section: {2}, Length: {3}", player.space, _space_idx, section, array_length(spaces));
 		if (player.space == _space_idx) {
-			lives--;
-			if (!audio_is_playing(snd_hurt)) {
-				audio_play_sound(snd_hurt, 10, false)	
-			}
+			player.take_damage();
 		}
 	}
 	for (var _i = 0; _i < instance_number(obj_shop_card); ++_i;)

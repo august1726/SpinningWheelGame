@@ -8,7 +8,7 @@ function Space() constructor {
 	shifted_color = shift_val(color);
 	num_items = 1;
 	items = array_create(num_items, noone)
-	coins = irandom(3);
+	coins = 3;
 	static collect_coins = function(_player) {
 		_player.coins += coins;
 		coins = 0;
@@ -34,8 +34,7 @@ function RedSpace() : Space() constructor {
 	shifted_color = shift_val(color);
 	descr = "Red Space\ntake damage upon entering. gold drops on this square doubled."
 	static player_action = function(_player) {
-		lives -= 1;
-		audio_play_sound(snd_hurt, 10, false)
+		_player.take_damage();
 	}
 	
 	static pointer_action = function() {
@@ -99,7 +98,7 @@ function GreySpace() : Space() constructor {
 }
 
 function HospitalSpace() : Space() constructor {
-	color = c_olive;
+	color = c_teal;
 	shifted_color = shift_val(color);
 	descr = "Hospital Space:\n Gives a blight (damage 1), then a heart (heal 1) to player."
 	static player_action = function(_player) {
@@ -111,5 +110,28 @@ function HospitalSpace() : Space() constructor {
 			array_set(_player.inventory, array_get_index(_player.inventory, noone), new HealthUp(true))
 		}
 		obj_spincard.calibrate_inventory();
+	}
+}
+
+function DoubleSpace() : Space() constructor {
+	color = c_fuchsia;
+	shifted_color = shift_val(color);
+	num_items = 0;
+	items = array_create(num_items, noone)
+	descr = "Double Space:\n Items used on this space will be activated again on the following turn."
+}
+
+function IntangibleSpace() : Space() constructor {
+	color = c_navy;
+	shifted_color = shift_val(color);
+	num_items = 1;
+	items = array_create(num_items, noone)
+	descr = "Intangible Space:\n Contains Intangible."
+	static stock_items = function() {
+		for (var _i = 0; _i < array_length(items); _i++) {
+			if(items[_i] == noone and obj_spincard.player.intangible == 0) {
+				items[_i] = new Intangible(false);
+			}
+		}
 	}
 }
