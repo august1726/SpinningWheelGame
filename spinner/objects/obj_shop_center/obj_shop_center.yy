@@ -1,12 +1,9 @@
 {
   "$GMObject":"",
-  "%Name":"obj_shop_card",
-  "eventList":[
-    {"$GMEvent":"","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-  ],
+  "%Name":"obj_shop_center",
+  "eventList":[],
   "managed":true,
-  "name":"obj_shop_card",
+  "name":"obj_shop_center",
   "overriddenProperties":[],
   "parent":{
     "name":"gameplay_ui",
@@ -31,9 +28,9 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"spr_middle_box",
-    "path":"sprites/spr_middle_box/spr_middle_box.yy",
+    "name":"spr_add",
+    "path":"sprites/spr_add/spr_add.yy",
   },
   "spriteMaskId":null,
-  "visible":true,
+  "visible":false,
 }

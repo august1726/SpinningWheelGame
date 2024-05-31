@@ -17,15 +17,32 @@ function shift_val(_col) {
 	return make_color_hsv(color_get_hue(_col), color_get_saturation(_col), color_get_value(_col) / 3);
 }
 
-function get_random_space(_space1, _space2) {
-	start = false;
-	space_type = GreySpace;
-	while (!start or is_instanceof(_space1, space_type) or is_instanceof(_space2, space_type)) {
+//function get_random_space(_space1, _space2, _space3=_space2) {
+//	space_type = noone;
+//	do {
+//		space_type = obj_spincard.spaces_list[irandom_range(0, array_length(obj_spincard.spaces_list)-1)];
+//	}
+//	until (!is_instanceof(_space1, space_type) and !is_instanceof(_space2, space_type) and !is_instanceof(_space3, space_type));
+//	return new space_type();
+//};
+
+function get_random_space(_spaces) {
+	space_type = noone;
+	do {
 		space_type = obj_spincard.spaces_list[irandom_range(0, array_length(obj_spincard.spaces_list)-1)];
-		start = true;
 	}
+	until (!is_one_of_space(space_type, _spaces));
 	return new space_type();
 };
+
+function is_one_of_space(_space_type, _spaces) {
+	for (var _i = 0; _i < array_length(_spaces); _i++) {
+		if (is_instanceof(_spaces[_i], _space_type)) {
+			return true;
+		}
+	}
+	return false;
+}
 
 function draw_how_to_play(_x1 = room_width/30, _y1 = room_height/12, _x2 = room_width - _x1, _y2 = room_height - _y1) {
 	static howto_text = "Click on a colored space on the wheel to start\nYou can move to adjacent spaces every turn\nSpaces you can move to are shown lighter than spaces you cannot move to\nHover over different spaces and power-ups to see what properties they have\nPlayers can buy power-ups when on their space\nPrices of new power-ups are dependent on turn number and player's wealth\nPower-ups and coins spawn on the space where a pointer lands\nIf a pointer lands on the player's space, they take 1 damage (per pointer)\nIf you reach 0 health, you lose\nIf you reach turn 30, you win\nThere is 1 pointer to begin with, and an additional pointer is added every 5 rounds"

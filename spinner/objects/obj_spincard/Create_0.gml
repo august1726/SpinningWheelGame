@@ -6,17 +6,22 @@
 #macro LINE_LENGTH (5.5*UNIT)
 randomise()
 
-gamemode = GAMEMODES.CRAZY;
+gamemode = GAMEMODES.NORMAL;
 player = new Player();
+
+start_types = array_create(0);
+spaces_list = array_create(0);
 
 switch(gamemode) {
 	case GAMEMODES.TUTORIAL:
 		win_threshold = 20
-		spaces_list = [YellowSpace, OrangeSpace, DoubleSpace, GreenSpace, IntangibleSpace];
-		items_list = [HealthUp, AddSpace, Vision, Delay];
-		num_start_spaces = 4;
+		spaces_list = [YellowSpace, OrangeSpace, DoubleSpace, GreenSpace, BlindSpace];
+		items_list = [HealthUp, AddSpace, Vision, Delay, Choice];
+		num_start_spaces = 5;
 		num_start_pointers = 3;
 		max_spaces = 15
+		start_types = array_shuffle(spaces_list);
+		array_resize(start_types, num_start_spaces)
 	break
 	case GAMEMODES.NORMAL:
 		win_threshold = 40
@@ -25,24 +30,26 @@ switch(gamemode) {
 		num_start_spaces = 5;
 		num_start_pointers = 1;
 		max_spaces = 30
+		start_types = array_shuffle(spaces_list);
+		array_resize(start_types, num_start_spaces)
 	break
 	case GAMEMODES.CRAZY:
 		win_threshold = 60
-		spaces_list = [RedSpace, OrangeSpace, YellowSpace, GreenSpace, BlueSpace, PurpleSpace, GreySpace, HospitalSpace, DoubleSpace, IntangibleSpace]
-		items_list = [HealthUp, AddSpace, Jetpack, Vision, Reroll, Delay, Blight];
-		num_start_spaces = 5;
+		spaces_list = [RedSpace, OrangeSpace, YellowSpace, GreenSpace, BlueSpace, PurpleSpace, GreySpace, HospitalSpace, DoubleSpace, IntangibleSpace, FreezeSpace]
+		items_list = [HealthUp, AddSpace, Jetpack, Vision, Reroll, Delay, Blight, Magnet];
+		num_start_spaces = 8;
 		num_start_pointers = 1;
 		max_spaces = 45
+		start_types = array_shuffle(spaces_list);
+		array_resize(start_types, num_start_spaces)
+		array_push(spaces_list, BlindSpace);
 	break
 }
-
-start_types = array_shuffle(spaces_list);
-array_resize(start_types, num_start_spaces)
 
 turn_num = 0;
 in_play = true
 
-spaces = array_create(num_start_spaces)
+spaces = array_create(num_start_spaces, noone)
 for (var _i = 0; _i < num_start_spaces; _i++) {
 	spaces[_i] = new start_types[_i]();
 	spaces[_i].stock_items();
@@ -75,12 +82,35 @@ for (var _i = 0; _i < instance_number(obj_item_slot); ++_i;)
 	item_slot[_i].i = _i;
 }
 
+function is_full(_element, _index)
+{
+    return _element != noone;
+}
+
 function calibrate_shop() {
-	for (var _i = 0; _i < spaces[player.space].num_items; _i++ ) {
-		shop_card[_i].item = spaces[player.space].items[_i]
-		shop_card[_i].space_inventory = spaces[player.space].items
+	var _space_items = spaces[player.space].items
+	var _items_for_sale = array_filter(_space_items, is_full)
+	var _num_items = array_length(_items_for_sale)
+	
+	var _x = obj_shop_center.x - (3/2)*(_num_items-1)*UNIT;
+	
+	for (var _i = 0; _i < array_length(_space_items); _i++ ) {
+		shop_card[_i].space_inventory = _space_items
+		if (_i < _num_items) {
+			shop_card[_i].item = _items_for_sale[_i]
+			shop_card[_i].x = _x
+			_x += 3*UNIT;
+		} else {
+			shop_card[_i].item = noone;
+		}
 	}
 	show_debug_message("Calibrating Shop")
+}
+
+function clear_shop() {
+	for (var _i = 0; _i < instance_number(obj_shop_card); ++_i;) {
+	    shop_card[_i].item = noone;
+	}	
 }
 
 function calibrate_inventory() {
@@ -106,11 +136,27 @@ function use_item(_i) {
 	
 	if (_item_used) {
 		audio_play_sound(snd_use, 10, false)
-		array_set(player.inventory, _i, noone)	
+		if (!is_instanceof(player.inventory[_i], Choice)) {
+			array_set(player.inventory, _i, noone)
+		} else {
+			_item_used = false;	
+		}
 	}
 	
 	show_debug_message(player.inventory);
 	return _item_used;
+}
+
+function n() {
+	return array_length(spaces);
+}
+
+function add_space(_idx, _space) {
+	array_insert(spaces, _idx, _space)
+}
+
+function remove_space(_idx) {
+	array_delete(spaces, _idx, 1)
 }
 
 enum STATES {

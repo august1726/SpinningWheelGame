@@ -3,6 +3,7 @@
 function Item(_free) constructor {
 	spr = spr_health;
 	descr = "Item"
+	reusable = false;
 	if (_free) {
 		price = 0;
 	} else if (obj_spincard.turn_num == 0) {
@@ -32,7 +33,7 @@ function AddSpace(_free) : Item(_free) constructor {
 		var _insert_idx = irandom(array_length(_spaces))
 		var _idx1 = _insert_idx mod array_length(_spaces)
 		var _idx2 = (_insert_idx + array_length(_spaces) - 1) mod array_length(_spaces)
-		var _new_space = get_random_space(_spaces[_idx1], _spaces[_idx2])
+		var _new_space = get_random_space([_spaces[_idx1], _spaces[_idx2]])
 		_new_space.stock_items();
 		
 		array_insert(_spaces, _insert_idx, _new_space)
@@ -79,12 +80,12 @@ function Reroll(_free) : Item(_free) constructor {
 		var _coins1 = ceil(_spaces[_idx2].coins);
 		var _coins2 = ceil(_spaces[_idx3].coins);
 		
-		var _new_space1 = get_random_space(_spaces[_idx1], _spaces[_player.space])
+		var _new_space1 = get_random_space([_spaces[_idx1], _spaces[_player.space]])
 		_new_space1.stock_items();
 		_new_space1.coins = _coins1;
 		array_set(_spaces, _idx2, _new_space1)
 		
-		var _new_space2 = get_random_space(_spaces[_idx4], _spaces[_player.space])
+		var _new_space2 = get_random_space([_spaces[_idx4], _spaces[_player.space]])
 		_new_space2.stock_items();
 		_new_space2.coins = _coins2;
 		array_set(_spaces, _idx3, _new_space2)
@@ -136,3 +137,63 @@ function Intangible(_free) : Item(_free) constructor {
 		obj_spincard.calibrate_inventory();
 	}
 }
+
+function Magnet(_free) : Item(_free) constructor {
+	spr = spr_magnet;
+	descr = string("Magnet, Price: {0}\nCollects coins from the space with the most coins", price);
+	use_action = function(_player, _spaces) {
+		var _max_coins_space = max_coin_space(_spaces);
+		_max_coins_space.collect_coins(_player);
+	}
+	static max_coin_space = function(_spaces) {
+		var _max_coins_idx = 0;
+		var _max_coins = _spaces[0].coins;
+
+		for (var _i = 1; _i < array_length(_spaces); _i++) {
+			if (_spaces[_i].coins > _max_coins) {
+				_max_coins_idx = _i;
+				_max_coins = _spaces[_i].coins;
+			}
+		}
+
+		return _spaces[_max_coins_idx];
+	}
+}
+
+function Shelf(_free) : Item(_free) constructor {
+	spr = spr_shelf;
+	descr = string("Shelf, Price: {0}\n If space has an item slot, add one extra item slot.", price);
+	use_action = function(_player, _spaces) {
+		var _space = _spaces[_player.space]
+		if (_space.num_items != 0 && _space.num_items == array_length(_space.items)) {
+			array_push(_space.items, noone);
+		}
+		
+	}
+}
+
+function Choice(_free) : Item(_free) constructor {
+	spr = spr_choice;
+	reusable = true;
+	choose_spaces = noone;
+	idx = false;
+	descr = string("Choice\n Changes space to {0}.", );
+	use_action = function(_player, _spaces) {
+		var _space = _spaces[_player.space]
+		if (spaces == noone) {
+			var _idx1 = (_player.space - 1 + _n) mod _n
+			var _idx2 = (_player.space + 1 + _n) mod _n
+			var _new_space1 = get_random_space([_spaces[_idx1], _spaces[_idx2], _space])
+			var _new_space2 = get_random_space([_spaces[_idx1], _spaces[_idx2], _space, _new_space1])
+			choose_spaces = [_new_space1, _new_space2]
+		}
+		
+		_spaces[_player.space] = choose_spaces[idx];
+		
+		idx = !idx
+		
+		obj_spincard.calibrate_inventory();
+		
+	}
+}
+

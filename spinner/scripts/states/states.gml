@@ -11,7 +11,10 @@ function choose_start(){
 }
 
 function initiate_turn() {
-	turn_num++;
+	if (!is_instanceof(spaces[player.space], FreezeSpace)) {
+		turn_num++;
+	}
+	
 	if (turn_num >= win_threshold) {
 		state = STATES.WIN;
 	} else {
@@ -28,10 +31,12 @@ function initiate_turn() {
 			player.sight_prob = 0;
 			warning_list = []
 			spaces[player.space].collect_coins(player);
-			spaces[player.space].player_action(player);
+			spaces[player.space].player_action(player, spaces);
 			player.use_repeats(player, spaces);
-			for (var _i = 0; _i < array_length(pointer_dirs); _i++) {
-				pointer_dirs[_i] = irandom_range(0, array_length(spaces)-1)*section + section/2 + random_range(-1, 1)*section/6
+			if (!is_instanceof(spaces[player.space], FreezeSpace)) {
+				for (var _i = 0; _i < array_length(pointer_dirs); _i++) {
+					pointer_dirs[_i] = irandom_range(0, array_length(spaces)-1)*section + section/2 + random_range(-1, 1)*section/6
+				}
 			}
 			obj_spincard.show_pointers();
 		
@@ -64,13 +69,18 @@ function player_turn(){
 			//show_debug_message("player: {0}, click: {1}, dist: {2}", player.space, _clicked_space, _spaces_away)
 			if (_spaces_away != 0 and _spaces_away <= player.movement) {
 				player.space = mouse_space;
-				state = STATES.SPIN;
+				if (!is_instanceof(spaces[player.space], FreezeSpace)) {
+					state = STATES.SPIN;
+				} else {
+					state = STATES.INITIATE_TURN;
+					obj_spincard.clear_shop();
+				}
 			}
 		}
 	}
 	
 	if mouse_check_button_pressed(mb_right) {
-		addspace.use_action(player, spaces);	
+		addspace.use_action(player, spaces);
 	}
 }
 
@@ -86,10 +96,7 @@ function spin(){
 			player.take_damage();
 		}
 	}
-	for (var _i = 0; _i < instance_number(obj_shop_card); ++_i;)
-		{
-		    shop_card[_i].item = noone;
-		}
+	obj_spincard.clear_shop();
 	
 	alarm[0] = game_get_speed(gamespeed_fps)*2;
 	audio_play_sound(snd_spinners, 10, false);

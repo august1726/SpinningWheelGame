@@ -8,6 +8,7 @@ draw_set_color(c_white)
 // draw color segment, player, items, and coins.
 for (var _space = 0; _space < array_length(spaces); _space++) {
 	// draw_color segment
+	draw_set_color(c_black)
 	space = spaces[_space];
 	
 	var _x1 = x + lengthdir_x(LINE_LENGTH, section*_space)
@@ -19,9 +20,13 @@ for (var _space = 0; _space < array_length(spaces); _space++) {
 	if (get_wrap_dist(player.space, _space, array_length(spaces)) > player.movement and state != STATES.CHOOSE_START) {
 		_col = space.shifted_color
 	}
+	
+	
+	
 	draw_triangle_color(x, y, _x1, _y1, _x2, _y2, _col, _col, _col, false);
+	
 	if (array_length(spaces) > 4)  {
-		draw_triangle_color(x, y, _x1, _y1, _x2, _y2, c_black, c_black, c_black, true);
+		draw_triangle_color(x, y, _x1, _y1, _x2, _y2, c_white, c_white, c_white, true);
 	} else {
 		var _x3 = x + lengthdir_x(LINE_LENGTH, section*(_space+0.5))
 		var _y3 = y + lengthdir_y(LINE_LENGTH, section*(_space+0.5))
@@ -59,17 +64,19 @@ for (var _space = 0; _space < array_length(spaces); _space++) {
 
 for (var _space = 0; _space < array_length(spaces); _space++) {
 	space = spaces[_space];
-	for (var _i = 0; _i < space.num_items; _i++) {
-		if (space.items[_i] != noone) {
-			var _item_dir = section * (_space + .5)
-			var _item_x = x + lengthdir_x(SPACING*(3+(_i*0.5)+(0.5*is_even(_space))), _item_dir)
-			var _item_y = y + lengthdir_y(SPACING*(3+(_i*0.5)+(0.5*is_even(_space))), _item_dir)
+	for (var _i = 0; _i < array_length(space.items); _i++) {
+		var _item_dir = section * (_space + .5)
+		var _item_x = x + lengthdir_x(SPACING*(3+(_i*0.5)+(0.5*is_even(_space))), _item_dir)
+		var _item_y = y + lengthdir_y(SPACING*(3+(_i*0.5)+(0.5*is_even(_space))), _item_dir)
 		
+		if (space.items[_i] != noone) {
 			draw_sprite(space.items[_i].spr, 0, _item_x, _item_y)
 			var _w = sprite_get_width(space.items[_i].spr)/2
 			if (point_in_rectangle(mouse_x, mouse_y, _item_x-_w, _item_y-_w, _item_x+_w, _item_y+_w)) {
 				obj_item_descr.text = space.items[_i].descr;
 			}
+		} else {
+			draw_sprite(spr_empty, 0, _item_x, _item_y)
 		}
 	}
 }
