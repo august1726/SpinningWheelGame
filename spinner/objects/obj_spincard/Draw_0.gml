@@ -16,33 +16,59 @@ for (var _space = 0; _space < array_length(spaces); _space++) {
 	var _x2 = x + lengthdir_x(LINE_LENGTH, section*(_space+1))
 	var _y2 = y + lengthdir_y(LINE_LENGTH, section*(_space+1))
 	
-	var _col = space.color
-	if (get_wrap_dist(player.space, _space, array_length(spaces)) > player.movement and state != STATES.CHOOSE_START) {
-		_col = space.shifted_color
-	}
-	
-	
-	
-	draw_triangle_color(x, y, _x1, _y1, _x2, _y2, _col, _col, _col, false);
-	
-	if (array_length(spaces) > 4)  {
-		draw_triangle_color(x, y, _x1, _y1, _x2, _y2, c_white, c_white, c_white, true);
+	if (is_array(space.colors)) {
+		if (get_wrap_dist(player.space, _space, array_length(spaces)) > player.movement and state != STATES.CHOOSE_START) {
+			draw_set_alpha(DARKEN)
+		}
+		for (var _i = 0; _i < array_length(space.colors); _i++) {
+			var _col = space.colors[_i]
+			var _ll = LINE_LENGTH*(array_length(space.colors)-_i)/array_length(space.colors)
+			var _tx1 = x + lengthdir_x(_ll, section*_space)
+			var _ty1 = y + lengthdir_y(_ll, section*_space )
+			var _tx2 = x + lengthdir_x(_ll, section*(_space+1))
+			var _ty2 = y + lengthdir_y(_ll, section*(_space+1))
+			draw_triangle_color(x, y, _tx1, _ty1, _tx2, _ty2, _col, _col, _col, false);
+		}
+		
+		if (array_length(spaces) <= 4) {
+			var _x3 = x + lengthdir_x(LINE_LENGTH, section*(_space+0.5))
+			var _y3 = y + lengthdir_y(LINE_LENGTH, section*(_space+0.5))
+			draw_triangle_custom(_x1, _y1, _x2, _y2, _x3, _y3, space.colors[0], 1, false);
+		}
+		
 	} else {
-		var _x3 = x + lengthdir_x(LINE_LENGTH, section*(_space+0.5))
-		var _y3 = y + lengthdir_y(LINE_LENGTH, section*(_space+0.5))
-		draw_triangle_color(_x1, _y1, _x2, _y2, _x3, _y3, _col, _col, _col, false);
+		var _col = space.colors
+		if (get_wrap_dist(player.space, _space, array_length(spaces)) > player.movement and state != STATES.CHOOSE_START) {
+			draw_set_alpha(DARKEN)
+		}
+		
+		draw_triangle_color(x, y, _x1, _y1, _x2, _y2, _col, _col, _col, false);
+		
+		if (array_length(spaces) <= 4) {
+			var _x3 = x + lengthdir_x(LINE_LENGTH, section*(_space+0.5))
+			var _y3 = y + lengthdir_y(LINE_LENGTH, section*(_space+0.5))
+			draw_triangle_custom(_x1, _y1, _x2, _y2, _x3, _y3, _col, 1, false);
+		}
 	}
+	draw_set_alpha(1)
+	
+	if (state == STATES.PLAYER_TURN) {
+		var _dist = get_wrap_dist(player.space, _space, array_length(spaces))
+		if (state != STATES.CHOOSE_START and (_dist != 0 or player.inspect) and _dist <= player.movement) {
+			var _width = clamp(6 - floor(array_length(spaces)/15), 1, 6);
+			draw_triangle_custom(x, y, _x1, _y1, _x2, _y2, c_white, _width);
+		}
+	}
+	
 	
 	if (point_in_triangle(mouse_x, mouse_y, x, y, _x1, _y1, _x2, _y2)) {
 		mouse_space = _space;
 	}
 	
-	
-	draw_set_alpha(1);
-	
+	// coin_display
 	var _coin_dir = section * (_space + .5)
-	var _coin_x = x + lengthdir_x(SPACING*5, _coin_dir)
-	var _coin_y = y + lengthdir_y(SPACING*5, _coin_dir)
+	var _coin_x = x + lengthdir_x(SPACING*5.5, _coin_dir)
+	var _coin_y = y + lengthdir_y(SPACING*5.5, _coin_dir)
 	
 	draw_sprite_ext(spr_coin, 0, _coin_x, _coin_y, 0.5, 0.5, 0, c_white, 1)
 	draw_set_halign(fa_center)
@@ -52,22 +78,41 @@ for (var _space = 0; _space < array_length(spaces); _space++) {
 	
 	draw_set_color(c_white)
 	
-	// 
-	if(array_contains(warning_list, _space) and state = STATES.PLAYER_TURN) {
+	// vision display
+	if((player.vision and space.num_pointers >= 1) and state = STATES.PLAYER_TURN) {
 		var _warning_dir = section * (_space + .5)
 		var _warning_x = x + lengthdir_x(SPACING*3, _warning_dir)
 		var _warning_y = y + lengthdir_y(SPACING*3, _warning_dir)
 		draw_set_color(c_white)
 		draw_sprite_ext(spr_warning,  0, _warning_x, _warning_y, 1, 1, _warning_dir, c_white, 1)
 	}
+	
+	// inspect display
+	if (player.inspect and state = STATES.PLAYER_TURN) {
+		if (get_wrap_dist(player.space, _space, array_length(spaces)) <= 1) {
+			var _warning_dir = section * (_space + .5)
+			var _inspect_x = x + lengthdir_x(SPACING*5, _warning_dir)
+			var _inspect_y = y + lengthdir_y(SPACING*5, _warning_dir)
+			draw_set_alpha(0.5);
+			draw_sprite(spr_inspect_display,  0, _inspect_x, _inspect_y)
+			draw_set_color(c_black)
+			draw_text(_inspect_x , _inspect_y, string(space.num_pointers));
+			draw_set_color(c_white)
+			draw_set_alpha(1);
+		}
+	}
 }
 
+
+// items display.
 for (var _space = 0; _space < array_length(spaces); _space++) {
 	space = spaces[_space];
 	for (var _i = 0; _i < array_length(space.items); _i++) {
 		var _item_dir = section * (_space + .5)
-		var _item_x = x + lengthdir_x(SPACING*(3+(_i*0.5)+(0.5*is_even(_space))), _item_dir)
-		var _item_y = y + lengthdir_y(SPACING*(3+(_i*0.5)+(0.5*is_even(_space))), _item_dir)
+		//var _item_x = x + lengthdir_x(SPACING*(3+(_i*0.5)+(0.5*is_even(_space))), _item_dir)
+		//var _item_y = y + lengthdir_y(SPACING*(3+(_i*0.5)+(0.5*is_even(_space))), _item_dir)
+		var _item_x = x + lengthdir_x(SPACING*(3.5+(_i*0.5)), _item_dir)
+		var _item_y = y + lengthdir_y(SPACING*(3.5+(_i*0.5)), _item_dir)
 		
 		if (space.items[_i] != noone) {
 			draw_sprite(space.items[_i].spr, 0, _item_x, _item_y)
@@ -109,15 +154,22 @@ if (state == STATES.WAIT and in_play) {
 
 if (state != STATES.CHOOSE_START and state != STATES.DEATH) {
 	var _player_dir = section * (player.space + .5)
-	var _player_x = x + lengthdir_x(SPACING*2, _player_dir)
-	var _player_y = y + lengthdir_y(SPACING*2, _player_dir)
+	var _player_x = x + lengthdir_x(SPACING*1.5, _player_dir)
+	var _player_y = y + lengthdir_y(SPACING*1.5, _player_dir)
+	var _scale =  2-((array_length(spaces)-num_start_spaces)/(max_spaces-num_start_spaces))
 	
 	if (player.intangible == 0) {
-		draw_sprite(spr_player, (lives <= 0), _player_x, _player_y)
+		draw_sprite_ext(spr_player, (lives <= 0), _player_x, _player_y, _scale, _scale, 0, c_white, 1)
 	} else if (player.intangible > 0) {
-		draw_sprite(spr_player, 2, _player_x, _player_y)
+		draw_sprite_ext(spr_player, 2, _player_x, _player_y, _scale, _scale, 0, c_white, 1)
 		draw_text(_player_x, _player_y, string(player.intangible))
 	}
+	
+	if (player.shell)
+		draw_sprite(spr_turtle, 0, x + lengthdir_x(SPACING*1.25, _player_dir), y + lengthdir_y(SPACING*1.25, _player_dir))
+	
+	if (player.insurance)
+		draw_sprite(spr_insurance, 0, x + lengthdir_x(SPACING*1.75, _player_dir), y + lengthdir_y(SPACING*1.75, _player_dir))
 	
 	var _w = sprite_get_width(spr_player)
 	if (point_in_rectangle(mouse_x, mouse_y, _player_x-_w, _player_y-_w, _player_x+_w, _player_y+_w)) {
@@ -140,5 +192,5 @@ if (sprite_width/2 < mouse_dist and mouse_dist < LINE_LENGTH) {
 	var _dir = point_direction(x, y, mouse_x, mouse_y)
 	var _hover_descr = spaces[mouse_space].descr
 	obj_space_descr.text = _hover_descr;
-	obj_space_descr.col = spaces[mouse_space].color
+	//obj_space_descr.col = spaces[mouse_space].colors[0]
 }

@@ -26,10 +26,9 @@ function initiate_turn() {
 		if (lives <= 0) {
 			state = STATES.DEATH;
 		} else {
-			player.reset_movement();
+			player.reset_attributes();
+			player.remove_choice();
 			player.subtract_intangible();
-			player.sight_prob = 0;
-			warning_list = []
 			spaces[player.space].collect_coins(player);
 			spaces[player.space].player_action(player, spaces);
 			player.use_repeats(player, spaces);
@@ -38,7 +37,7 @@ function initiate_turn() {
 					pointer_dirs[_i] = irandom_range(0, array_length(spaces)-1)*section + section/2 + random_range(-1, 1)*section/6
 				}
 			}
-			obj_spincard.show_pointers();
+			obj_spincard.calculate_pointers();
 		
 			calibrate_shop();
 		
@@ -51,14 +50,14 @@ function initiate_turn() {
 	}
 }
 
-function show_pointers() {
-	for (var _i = 0; _i < array_length(pointer_dirs); _i++) {
-		var _space_idx = get_triangle_space(pointer_dirs[_i], section, array_length(spaces)) //clamp(pointer_dirs[_i] div section, 0, array_length(spaces)-1)
-		if (!array_contains(warning_list, _space_idx) and random(1) < player.sight_prob) {
-			array_push(warning_list, _space_idx);
-		}
-	}
-}
+//function show_pointers() {
+//	for (var _i = 0; _i < array_length(pointer_dirs); _i++) {
+//		var _space_idx = get_triangle_space(pointer_dirs[_i], section, array_length(spaces)) //clamp(pointer_dirs[_i] div section, 0, array_length(spaces)-1)
+//		if (!array_contains(warning_list, _space_idx) and random(1) < player.sight_prob) {
+//			array_push(warning_list, _space_idx);
+//		}
+//	}
+//}
 
 function player_turn(){
 	
@@ -67,7 +66,7 @@ function player_turn(){
 		if (sprite_width/2 < mouse_dist and mouse_dist < LINE_LENGTH) {
 			var _spaces_away = get_wrap_dist(player.space, mouse_space, array_length(spaces))
 			//show_debug_message("player: {0}, click: {1}, dist: {2}", player.space, _clicked_space, _spaces_away)
-			if (_spaces_away != 0 and _spaces_away <= player.movement) {
+			if ((_spaces_away != 0 or player.inspect) and _spaces_away <= player.movement) {
 				player.space = mouse_space;
 				if (!is_instanceof(spaces[player.space], FreezeSpace)) {
 					state = STATES.SPIN;
@@ -86,14 +85,15 @@ function player_turn(){
 
 
 function spin(){
-	for (var _i = 0; _i < array_length(pointer_dirs); _i++) {
-		var _space_idx = get_triangle_space(pointer_dirs[_i], section, array_length(spaces)) //clamp(pointer_dirs[_i] div section, 0, array_length(spaces)-1)
-		show_debug_message(_space_idx)
-		spaces[_space_idx].stock_items(items_list);
-		spaces[_space_idx].pointer_action();
-		show_debug_message("Player: {0}, Pointer: {1}, Section: {2}, Length: {3}", player.space, _space_idx, section, array_length(spaces));
-		if (player.space == _space_idx) {
-			player.take_damage();
+	for (var _i = 0; _i < array_length(spaces); _i++) {
+		if (spaces[_i].num_pointers >= 1) {
+			spaces[_i].stock_items(player.reset_items);
+		}
+		spaces[_i].spin_action();
+		//show_debug_message("Player: {0}, Pointer: {1}, Section: {2}, Length: {3}", player.space, _space_idx, section, array_length(spaces));
+		
+		if (player.space == _i) {
+			player.take_pointer_damage(spaces[_i].num_pointers);
 		}
 	}
 	obj_spincard.clear_shop();

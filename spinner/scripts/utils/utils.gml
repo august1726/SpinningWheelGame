@@ -13,9 +13,25 @@ function is_even(_num) {
 	return (_num mod 2 == 0);
 }
 
-function shift_val(_col) {
-	return make_color_hsv(color_get_hue(_col), color_get_saturation(_col), color_get_value(_col) / 3);
+function draw_triangle_custom(_x1, _y1, _x2, _y2, _x3, _y3, _col, _line_width, _outline = true) {
+  // Check if outline argument is true (defaults to true)
+  if (_outline) {
+    // Set the line color before drawing
+    draw_set_color(_col);  // Assuming you want same color for all sides
+    
+    // Draw each side of the triangle with the specified line width
+    draw_line_width(_x1, _y1, _x2, _y2, _line_width);
+    draw_line_width(_x2, _y2, _x3, _y3, _line_width);
+    draw_line_width(_x3, _y3, _x1, _y1, _line_width);
+  } else {
+    // If outline is false, use draw_triangle with original coloring
+    draw_triangle_colour(_x1, _y1, _x2, _y2, _x3, _y3, _col, _col, _col, _outline);
+  }
 }
+
+//function shift_val(_col) {
+//	return make_color_hsv(color_get_hue(_col), color_get_saturation(_col), color_get_value(_col) / 3);
+//}
 
 //function get_random_space(_space1, _space2, _space3=_space2) {
 //	space_type = noone;

@@ -4,19 +4,20 @@
 #macro HEAL_MAX 2
 #macro UNIT 32
 #macro LINE_LENGTH (5.5*UNIT)
+#macro DARKEN 0.6
 randomise()
 
-gamemode = GAMEMODES.NORMAL;
+gamemode = GAMEMODES.CRAZY;
 player = new Player();
 
 start_types = array_create(0);
 spaces_list = array_create(0);
 
 switch(gamemode) {
-	case GAMEMODES.TUTORIAL:
+	case GAMEMODES.TEST:
 		win_threshold = 20
-		spaces_list = [YellowSpace, OrangeSpace, DoubleSpace, GreenSpace, BlindSpace];
-		items_list = [HealthUp, AddSpace, Vision, Delay, Choice];
+		spaces_list = [YellowSpace, OrangeSpace, DoubleSpace, BlindSpace];
+		items_list = [Insurance, Shell, Vision, Reset, Inspect];
 		num_start_spaces = 5;
 		num_start_pointers = 3;
 		max_spaces = 15
@@ -36,7 +37,7 @@ switch(gamemode) {
 	case GAMEMODES.CRAZY:
 		win_threshold = 60
 		spaces_list = [RedSpace, OrangeSpace, YellowSpace, GreenSpace, BlueSpace, PurpleSpace, GreySpace, HospitalSpace, DoubleSpace, IntangibleSpace, FreezeSpace]
-		items_list = [HealthUp, AddSpace, Jetpack, Vision, Reroll, Delay, Blight, Magnet];
+		items_list = [HealthUp, AddSpace, Jetpack, Vision, Reroll, Delay, Blight, Magnet, Shelf, Shell, Reset, Insurance, Inspect];
 		num_start_spaces = 8;
 		num_start_pointers = 1;
 		max_spaces = 45
@@ -53,6 +54,7 @@ spaces = array_create(num_start_spaces, noone)
 for (var _i = 0; _i < num_start_spaces; _i++) {
 	spaces[_i] = new start_types[_i]();
 	spaces[_i].stock_items();
+	spaces[_i].coins = irandom_range(1, 3);
 }
 
 space = noone;
@@ -61,7 +63,6 @@ mouse_space = 0;
 num_lines = 360*1.5;
 section = 360 / array_length(spaces)
 pointer_dirs = array_create(num_start_pointers)
-warning_list = [];
 
 mouse_dist  = 0;
 
@@ -126,8 +127,11 @@ function use_item(_i) {
 		if (is_struct(player.inventory[_i]) and is_instanceof(player.inventory[_i], Blight)) {
 			_item_used = true;
 		}
+		if (is_struct(player.inventory[_i]) and is_instanceof(player.inventory[_i], Choice)) {
+			_item_used = true;
+		}
 	} else {
-		if (is_instanceof(spaces[player.space], DoubleSpace)) {
+		if (is_instanceof(spaces[player.space], DoubleSpace) and !is_instanceof(player.inventory[_i], Choice)) {
 			array_push(player.repeat_items, player.inventory[_i])
 		}
 		player.inventory[_i].use_action(player, spaces);
@@ -138,13 +142,14 @@ function use_item(_i) {
 		audio_play_sound(snd_use, 10, false)
 		if (!is_instanceof(player.inventory[_i], Choice)) {
 			array_set(player.inventory, _i, noone)
+			player.remove_choice();
+			return true;
 		} else {
-			_item_used = false;	
+			return false;
 		}
 	}
+	return false;
 	
-	show_debug_message(player.inventory);
-	return _item_used;
 }
 
 function n() {
@@ -170,7 +175,7 @@ enum STATES {
 }
 
 enum GAMEMODES {
-	TUTORIAL,
+	TEST,
 	NORMAL,
 	CRAZY
 }
@@ -180,13 +185,17 @@ state_descrs = ["Choose Start", "Player Turn", "Player Turn", "Pointer turn", "P
 
 state = STATES.CHOOSE_START;
 
-function show_pointers() {
-	warning_list = []
+function calculate_pointers() {
+	reset_pointer_counts();
 	for (var _i = 0; _i < array_length(pointer_dirs); _i++) {
 		var _space_idx = get_triangle_space(pointer_dirs[_i], section, array_length(spaces))
-		if (!array_contains(warning_list, _space_idx) and player.sight_prob == 1) {
-			array_push(warning_list, _space_idx);
-		}
+		spaces[_space_idx].num_pointers++;
+	}
+}
+
+function reset_pointer_counts() {
+	for (var _i = 0; _i < array_length(spaces); _i++) {
+		spaces[_i].num_pointers = 0;
 	}
 }
 
@@ -196,3 +205,4 @@ draw_set_font(fnt_default)
 audio_play_sound(snd_mus_main, 10, true)
 
 addspace = new AddSpace(true)
+show_debug_message(string(instanceof(addspace)));

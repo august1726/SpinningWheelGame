@@ -18,10 +18,11 @@ function Item(_free) constructor {
 
 function HealthUp(_free) : Item(_free) constructor {
 	spr = spr_health;
-	descr = string("Health, Price: {0}\n+1 health", price)
+	descr = string("Health, Price: {0}\n+1 health if health 4 or less", price)
 	use_action = function(_player, _spaces) {
 		show_debug_message("Health")
-		lives++;
+		if (lives <= 4)
+			lives++;
 	}
 }
 
@@ -41,9 +42,7 @@ function AddSpace(_free) : Item(_free) constructor {
 			_player.space++;
 		}
 		obj_spincard.section = 360 / array_length(_spaces)
-		if (_player.sight_prob > 0) {
-			obj_spincard.show_pointers();
-		}
+		obj_spincard.calculate_pointers();
 	}
 }
 
@@ -61,8 +60,8 @@ function Vision(_free) : Item(_free) constructor {
 	descr = string("Vision, Price: {0}\nsee all dangerous spaces", price);
 	use_action = function(_player, _spaces) {
 		show_debug_message("Vision")
-		_player.sight_prob = 1;
-		obj_spincard.show_pointers();
+		_player.vision = true;
+		obj_spincard.calculate_pointers();
 	}
 }
 
@@ -89,6 +88,8 @@ function Reroll(_free) : Item(_free) constructor {
 		_new_space2.stock_items();
 		_new_space2.coins = _coins2;
 		array_set(_spaces, _idx3, _new_space2)
+		
+		obj_spincard.calculate_pointers();
 	}
 }
 
@@ -115,8 +116,8 @@ function Blight(_free) : Item(_free) constructor {
 
 function Intangible(_free) : Item(_free) constructor {
 	spr = spr_intangible;
-	intangible_length = 2;
-	descr = string("Intangible, Price: {0}\ntake no damage for 2 turns.\ndestroy every other intangible", price);
+	intangible_length = 1;
+	descr = string("Intangible, Price: {0}\ntake no damage for 1 turn.\ndestroy every other intangible", price);
 	use_action = function(_player, _spaces) {
 		show_debug_message("Intangible")
 		_player.intangible += intangible_length;
@@ -177,23 +178,65 @@ function Choice(_free) : Item(_free) constructor {
 	reusable = true;
 	choose_spaces = noone;
 	idx = false;
-	descr = string("Choice\n Changes space to {0}.", );
+	descr = string("Choice\n Allows player to pick out of 2 spaces.");
 	use_action = function(_player, _spaces) {
 		var _space = _spaces[_player.space]
-		if (spaces == noone) {
+		if (choose_spaces == noone) {
+			_player.choice = self;
+			var _n = array_length(_spaces)
 			var _idx1 = (_player.space - 1 + _n) mod _n
 			var _idx2 = (_player.space + 1 + _n) mod _n
 			var _new_space1 = get_random_space([_spaces[_idx1], _spaces[_idx2], _space])
+			_new_space1.stock_items();
 			var _new_space2 = get_random_space([_spaces[_idx1], _spaces[_idx2], _space, _new_space1])
+			_new_space2.stock_items();
 			choose_spaces = [_new_space1, _new_space2]
 		}
 		
 		_spaces[_player.space] = choose_spaces[idx];
-		
+		obj_spincard.clear_shop();
+		obj_spincard.calibrate_shop();
 		idx = !idx
+		descr = string("Choice\n Changes current space to option #{0}.", idx+1);
 		
 		obj_spincard.calibrate_inventory();
+		obj_spincard.calculate_pointers();
 		
+	}
+}
+
+function Insurance(_free) : Item(_free) constructor {
+	spr = spr_insurance;
+	descr = string("Insurance, Price: {0}\nIf you are hit by a pointer next turns, Take 1 less damage.", price);
+	use_action = function(_player, _spaces) {
+		_player.insurance = true;
+	}
+}
+
+function Shell(_free) : Item(_free) constructor {
+	spr = spr_turtle;
+	descr = string("Shell, Price: {0}\nreduce all damage by pointers to 1 next turn", price);
+	use_action = function(_player, _spaces) {
+		show_debug_message("Jet Pack")
+		_player.shell = true;
+	}
+}
+
+function Inspect(_free) : Item(_free) constructor {
+	spr = spr_inspect;
+	descr = string("Jetpack, Price: {0}\ntravel anywhere on the board", price);
+	use_action = function(_player, _spaces) {
+		show_debug_message("Jet Pack")
+		_player.inspect = true;
+	}
+}
+
+function Reset(_free) : Item(_free) constructor {
+	spr = spr_reset;
+	descr = string("Reset, Price: {0}\nPointers reset all items for the spaces they land on next turn.", price);
+	use_action = function(_player, _spaces) {
+		show_debug_message("Jet Pack")
+		_player.reset_items = true;
 	}
 }
 
