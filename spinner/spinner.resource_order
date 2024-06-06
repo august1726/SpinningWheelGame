@@ -7,8 +7,8 @@
     {"name":"Rooms","order":5,"path":"folders/Rooms.yy",},
     {"name":"Scripts","order":2,"path":"folders/Scripts.yy",},
     {"name":"Sounds","order":1,"path":"folders/Sounds.yy",},
-    {"name":"menu_icons","order":8,"path":"folders/Sprites/menu_icons.yy",},
     {"name":"item_icons","order":2,"path":"folders/Sprites/item_icons.yy",},
+    {"name":"menu_icons","order":8,"path":"folders/Sprites/menu_icons.yy",},
     {"name":"ui_icons","order":7,"path":"folders/Sprites/ui_icons.yy",},
   ],
   "ResourceOrderSettings":[

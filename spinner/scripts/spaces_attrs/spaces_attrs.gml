@@ -9,6 +9,7 @@ function Space() constructor {
 	items = array_create(num_items, noone)
 	coins = 0;
 	num_pointers = 0;
+	idx = 0;
 	static collect_coins = function(_player) {
 		_player.coins += coins;
 		coins = 0;
@@ -156,8 +157,11 @@ function FreezeSpace() : Space() constructor {
 }
 
 function SwapSpace() : Space() constructor {
-	colors = c_black
+	colors = [c_lime, c_olive, c_olive, c_lime]
 	num_items = 1;
 	items = array_create(num_items, noone)
 	descr = "Swap Space:\n Swaps position with another randoms space after leaving."
+	static player_action = function(_player, _spaces) {
+		_player.swap_space = self
+	}
 }

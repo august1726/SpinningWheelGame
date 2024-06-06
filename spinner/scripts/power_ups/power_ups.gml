@@ -1,7 +1,6 @@
 // Script assets have changed for v2.3.0 see
 // https://help.yoyogames.com/hc/en-us/articles/360005277377 for more information
 function Item(_free) constructor {
-	spr = spr_health;
 	descr = "Item"
 	reusable = false;
 	if (_free) {
@@ -17,7 +16,8 @@ function Item(_free) constructor {
 }
 
 function HealthUp(_free) : Item(_free) constructor {
-	spr = spr_health;
+	static spr = spr_health;
+	static prob = 0;
 	descr = string("Health, Price: {0}\n+1 health if health 4 or less", price)
 	use_action = function(_player, _spaces) {
 		show_debug_message("Health")
@@ -27,7 +27,8 @@ function HealthUp(_free) : Item(_free) constructor {
 }
 
 function AddSpace(_free) : Item(_free) constructor {
-	spr = spr_add;
+	static spr = spr_add;
+	static prob = 0;
 	descr = string("Plus, Price: {0}\nadd a space to the board", price);
 	use_action = function(_player, _spaces) {
 		show_debug_message("Add Space")
@@ -47,7 +48,8 @@ function AddSpace(_free) : Item(_free) constructor {
 }
 
 function Jetpack(_free) : Item(_free) constructor {
-	spr = spr_jetpack;
+	static spr = spr_jetpack;
+	static prob = 0;
 	descr = string("Jetpack, Price: {0}\ntravel anywhere on the board", price);
 	use_action = function(_player, _spaces) {
 		show_debug_message("Jet Pack")
@@ -56,7 +58,7 @@ function Jetpack(_free) : Item(_free) constructor {
 }
 
 function Vision(_free) : Item(_free) constructor {
-	spr = spr_eyes;
+	static spr = spr_eyes;
 	descr = string("Vision, Price: {0}\nsee all dangerous spaces", price);
 	use_action = function(_player, _spaces) {
 		show_debug_message("Vision")

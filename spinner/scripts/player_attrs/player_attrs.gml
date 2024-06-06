@@ -15,6 +15,7 @@ function Player() constructor {
 	insurance = false;
 	reset_items = false;
 	repeat_items = array_create(0)
+	swap_space = noone;
 	static reset_countdown = function() {
 		next_ptr = countdown_length;
 	}

@@ -4,7 +4,7 @@
 #macro HEAL_MAX 2
 #macro UNIT 32
 #macro LINE_LENGTH (5.5*UNIT)
-#macro DARKEN 0.6
+#macro DARKEN 0.3
 randomise()
 
 gamemode = GAMEMODES.CRAZY;
@@ -36,7 +36,7 @@ switch(gamemode) {
 	break
 	case GAMEMODES.CRAZY:
 		win_threshold = 60
-		spaces_list = [RedSpace, OrangeSpace, YellowSpace, GreenSpace, BlueSpace, PurpleSpace, GreySpace, HospitalSpace, DoubleSpace, IntangibleSpace, FreezeSpace]
+		spaces_list = [RedSpace, OrangeSpace, YellowSpace, GreenSpace, BlueSpace, PurpleSpace, GreySpace, HospitalSpace, DoubleSpace, IntangibleSpace, FreezeSpace, SwapSpace]
 		items_list = [HealthUp, AddSpace, Jetpack, Vision, Reroll, Delay, Blight, Magnet, Shelf, Shell, Reset, Insurance, Inspect];
 		num_start_spaces = 8;
 		num_start_pointers = 1;
@@ -106,6 +106,24 @@ function calibrate_shop() {
 		}
 	}
 	show_debug_message("Calibrating Shop")
+}
+
+function get_static_items() {
+	for (var _i = 0; _i < array_length(items_list); _i++) {
+		var _static_item = items_list[_i].prob
+		// static_get(items_list[_i]);
+	}
+}
+
+function show_probs() {
+	var _num_items = array_length(items_list)
+	
+	var _x = obj_shop_center.x - (3/2)*(_num_items-1)*UNIT;
+	
+	for (var _i = 0; _i < array_length(_space_items); _i++ ) {
+		shop_card[_i].space_inventory = _space_items
+		
+	}
 }
 
 function clear_shop() {
@@ -206,3 +224,5 @@ audio_play_sound(snd_mus_main, 10, true)
 
 addspace = new AddSpace(true)
 show_debug_message(string(instanceof(addspace)));
+
+show_debug_message(string(static_get(method_get_index(AddSpace)).prob))

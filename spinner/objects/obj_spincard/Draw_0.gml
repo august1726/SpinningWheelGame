@@ -4,12 +4,12 @@ draw_set_color(c_black)
 draw_circle(x, y, LINE_LENGTH-UNIT, false);
 draw_set_color(c_white)
 
-
 // draw color segment, player, items, and coins.
 for (var _space = 0; _space < array_length(spaces); _space++) {
 	// draw_color segment
 	draw_set_color(c_black)
 	space = spaces[_space];
+	space.idx = _space;
 	
 	var _x1 = x + lengthdir_x(LINE_LENGTH, section*_space)
 	var _y1 = y + lengthdir_y(LINE_LENGTH, section*_space )
@@ -17,9 +17,6 @@ for (var _space = 0; _space < array_length(spaces); _space++) {
 	var _y2 = y + lengthdir_y(LINE_LENGTH, section*(_space+1))
 	
 	if (is_array(space.colors)) {
-		if (get_wrap_dist(player.space, _space, array_length(spaces)) > player.movement and state != STATES.CHOOSE_START) {
-			draw_set_alpha(DARKEN)
-		}
 		for (var _i = 0; _i < array_length(space.colors); _i++) {
 			var _col = space.colors[_i]
 			var _ll = LINE_LENGTH*(array_length(space.colors)-_i)/array_length(space.colors)
@@ -30,6 +27,12 @@ for (var _space = 0; _space < array_length(spaces); _space++) {
 			draw_triangle_color(x, y, _tx1, _ty1, _tx2, _ty2, _col, _col, _col, false);
 		}
 		
+		if (get_wrap_dist(player.space, _space, array_length(spaces)) > player.movement and state != STATES.CHOOSE_START) {
+			draw_set_alpha(0.3);
+			draw_triangle_color(x, y, _x1, _y1, _x2, _y2, c_black, c_black, c_black, false);
+			draw_set_alpha(1);
+		}
+		
 		if (array_length(spaces) <= 4) {
 			var _x3 = x + lengthdir_x(LINE_LENGTH, section*(_space+0.5))
 			var _y3 = y + lengthdir_y(LINE_LENGTH, section*(_space+0.5))
@@ -38,6 +41,7 @@ for (var _space = 0; _space < array_length(spaces); _space++) {
 		
 	} else {
 		var _col = space.colors
+		draw_triangle_color(x, y, _x1, _y1, _x2, _y2, c_black, c_black, c_black, false);
 		if (get_wrap_dist(player.space, _space, array_length(spaces)) > player.movement and state != STATES.CHOOSE_START) {
 			draw_set_alpha(DARKEN)
 		}
@@ -52,31 +56,10 @@ for (var _space = 0; _space < array_length(spaces); _space++) {
 	}
 	draw_set_alpha(1)
 	
-	if (state == STATES.PLAYER_TURN) {
-		var _dist = get_wrap_dist(player.space, _space, array_length(spaces))
-		if (state != STATES.CHOOSE_START and (_dist != 0 or player.inspect) and _dist <= player.movement) {
-			var _width = clamp(6 - floor(array_length(spaces)/15), 1, 6);
-			draw_triangle_custom(x, y, _x1, _y1, _x2, _y2, c_white, _width);
-		}
-	}
-	
 	
 	if (point_in_triangle(mouse_x, mouse_y, x, y, _x1, _y1, _x2, _y2)) {
 		mouse_space = _space;
 	}
-	
-	// coin_display
-	var _coin_dir = section * (_space + .5)
-	var _coin_x = x + lengthdir_x(SPACING*5.5, _coin_dir)
-	var _coin_y = y + lengthdir_y(SPACING*5.5, _coin_dir)
-	
-	draw_sprite_ext(spr_coin, 0, _coin_x, _coin_y, 0.5, 0.5, 0, c_white, 1)
-	draw_set_halign(fa_center)
-	draw_set_valign(fa_middle)
-	draw_set_color(c_black)
-	draw_text(_coin_x, _coin_y, string(space.coins));
-	
-	draw_set_color(c_white)
 	
 	// vision display
 	if((player.vision and space.num_pointers >= 1) and state = STATES.PLAYER_TURN) {
@@ -124,6 +107,30 @@ for (var _space = 0; _space < array_length(spaces); _space++) {
 			draw_sprite(spr_empty, 0, _item_x, _item_y)
 		}
 	}
+	
+	var _x1 = x + lengthdir_x(LINE_LENGTH, section*_space)
+	var _y1 = y + lengthdir_y(LINE_LENGTH, section*_space )
+	var _x2 = x + lengthdir_x(LINE_LENGTH, section*(_space+1))
+	var _y2 = y + lengthdir_y(LINE_LENGTH, section*(_space+1))
+	
+	if (state == STATES.PLAYER_TURN) {
+		var _dist = get_wrap_dist(player.space, _space, array_length(spaces))
+		if (state != STATES.CHOOSE_START and (_dist != 0 or player.inspect) and _dist <= player.movement) {
+			var _width = clamp(6 - floor(array_length(spaces)/15), 1, 6);
+			draw_triangle_custom(x, y, _x1, _y1, _x2, _y2, c_white, _width);
+		}
+	}
+	
+	var _coin_dir = section * (_space + .5)
+	var _coin_x = x + lengthdir_x(SPACING*5.5, _coin_dir)
+	var _coin_y = y + lengthdir_y(SPACING*5.5, _coin_dir)
+	
+	draw_sprite_ext(spr_coin, 0, _coin_x, _coin_y, 0.5, 0.5, 0, c_white, 1)
+	draw_set_halign(fa_center)
+	draw_set_valign(fa_middle)
+	draw_set_color(c_black)
+	draw_text(_coin_x, _coin_y, string(space.coins));
+	draw_set_color(c_white)
 }
 
 draw_set_color(c_yellow)

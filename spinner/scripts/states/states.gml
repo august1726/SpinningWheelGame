@@ -67,7 +67,14 @@ function player_turn(){
 			var _spaces_away = get_wrap_dist(player.space, mouse_space, array_length(spaces))
 			//show_debug_message("player: {0}, click: {1}, dist: {2}", player.space, _clicked_space, _spaces_away)
 			if ((_spaces_away != 0 or player.inspect) and _spaces_away <= player.movement) {
+				var _stayed = player.space == mouse_space;
+				var _space = spaces[player.space];
 				player.space = mouse_space;
+				
+				if (!_stayed and is_instanceof(_space, SwapSpace)) {
+					swap_spaces(_space, spaces)
+				}
+				
 				if (!is_instanceof(spaces[player.space], FreezeSpace)) {
 					state = STATES.SPIN;
 				} else {
@@ -80,6 +87,29 @@ function player_turn(){
 	
 	if mouse_check_button_pressed(mb_right) {
 		addspace.use_action(player, spaces);
+	}
+}
+
+function swap_spaces(_swap_space, _spaces) {
+	var _n = array_length(_spaces)
+	var _available = array_create(0)
+	for (var _i = 0; _i < _n; _i++) {
+		if (_i != player.space and _i != _swap_space.idx) {
+			var _adj1 = (_i - 1 + _n) mod _n
+			var _adj2 = (_i + 1 + _n) mod _n
+			if (!is_instanceof(_spaces[_adj1], SwapSpace) and !is_instanceof(_spaces[_adj2], SwapSpace)) {
+				array_push(_available, _i)
+			}
+		}
+	}
+	
+	var _num_available = array_length(_available)
+	if (_num_available > 0) {
+		var _chosen = _available[irandom(_num_available-1)]
+		
+		var _temp = _spaces[_swap_space.idx]
+		_spaces[_swap_space.idx] = _spaces[_chosen]
+		_spaces[_chosen] = _temp;
 	}
 }
 
