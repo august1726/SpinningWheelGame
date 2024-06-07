@@ -203,6 +203,8 @@ state_descrs = ["Choose Start", "Player Turn", "Player Turn", "Pointer turn", "P
 
 state = STATES.CHOOSE_START;
 
+
+
 function calculate_pointers() {
 	reset_pointer_counts();
 	for (var _i = 0; _i < array_length(pointer_dirs); _i++) {

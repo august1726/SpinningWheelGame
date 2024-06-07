@@ -26,7 +26,7 @@
   "isEcma":false,
   "LibraryEmitters":[],
   "MetaData":{
-    "IDEVersion":"2024.2.0.132",
+    "IDEVersion":"2024.4.1.152",
   },
   "name":"spinner",
   "resources":[
@@ -80,8 +80,8 @@
     {"id":{"name":"spr_empty","path":"sprites/spr_empty/spr_empty.yy",},},
     {"id":{"name":"spr_eyes","path":"sprites/spr_eyes/spr_eyes.yy",},},
     {"id":{"name":"spr_health","path":"sprites/spr_health/spr_health.yy",},},
-    {"id":{"name":"spr_inspect","path":"sprites/spr_inspect/spr_inspect.yy",},},
     {"id":{"name":"spr_inspect_display","path":"sprites/spr_inspect_display/spr_inspect_display.yy",},},
+    {"id":{"name":"spr_inspect","path":"sprites/spr_inspect/spr_inspect.yy",},},
     {"id":{"name":"spr_insurance","path":"sprites/spr_insurance/spr_insurance.yy",},},
     {"id":{"name":"spr_intangible","path":"sprites/spr_intangible/spr_intangible.yy",},},
     {"id":{"name":"spr_jetpack","path":"sprites/spr_jetpack/spr_jetpack.yy",},},
