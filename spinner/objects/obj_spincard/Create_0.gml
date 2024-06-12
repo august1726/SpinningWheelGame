@@ -5,6 +5,9 @@
 #macro UNIT 32
 #macro LINE_LENGTH (5.5*UNIT)
 #macro DARKEN 0.3
+#macro PROB_START 2
+#macro PROB_MIN 0
+#macro PROB_MAX 3
 randomise()
 
 gamemode = GAMEMODES.CRAZY;
@@ -12,6 +15,8 @@ player = new Player();
 
 start_types = array_create(0);
 spaces_list = array_create(0);
+items_list = array_create(0);
+item_sprs = array_create(0);
 
 switch(gamemode) {
 	case GAMEMODES.TEST:
@@ -37,20 +42,49 @@ switch(gamemode) {
 	case GAMEMODES.CRAZY:
 		win_threshold = 60
 		spaces_list = [RedSpace, OrangeSpace, YellowSpace, GreenSpace, BlueSpace, PurpleSpace, GreySpace, HospitalSpace, DoubleSpace, IntangibleSpace, FreezeSpace, SwapSpace]
-		items_list = [HealthUp, AddSpace, Jetpack, Vision, Reroll, Delay, Blight, Magnet, Shelf, Shell, Reset, Insurance, Inspect];
+		items_list = [HealthUp, AddSpace, Jetpack, Vision, Reroll, Delay, Blight, Magnet, Shelf, Shell, Reset, Insurance, Inspect, Diminish];
+		for (var _i = 0; _i < array_length(items_list); _i++ ) {
+			var _item = new items_list[_i](true);
+			item_sprs[_i] = static_get(items_list[_i]).spr
+		}
+		
 		num_start_spaces = 8;
 		num_start_pointers = 1;
 		max_spaces = 45
 		start_types = array_shuffle(spaces_list);
 		array_resize(start_types, num_start_spaces)
 		array_push(spaces_list, BlindSpace);
+		array_push(spaces_list, AccumulateSpace);
 	break
 }
+
+var _len = array_length(items_list)
+
+item_probs = array_create(_len, PROB_START);
+prob_sum = _len * PROB_START
+min_prob_sum = 4*PROB_MAX
+max_prob_sum = _len * PROB_MAX
 
 turn_num = 0;
 in_play = true
 
-spaces = array_create(num_start_spaces, noone)
+function random_item() {
+	var _rand_num = irandom(prob_sum-1);
+	show_debug_message(_rand_num)
+	var _sum = 0;
+	
+	for (var _i = 0; _i < array_length(items_list); _i++) {
+		_sum += item_probs[_i]
+		if (_sum > _rand_num) {
+			show_debug_message(instanceof(new items_list[_i]()))
+			return items_list[_i];
+		}
+	}
+	return HealthUp;
+}
+
+
+spaces = array_create(num_start_spaces, Space)
 for (var _i = 0; _i < num_start_spaces; _i++) {
 	spaces[_i] = new start_types[_i]();
 	spaces[_i].stock_items();
@@ -65,6 +99,8 @@ section = 360 / array_length(spaces)
 pointer_dirs = array_create(num_start_pointers)
 
 mouse_dist  = 0;
+
+addspace = new AddSpace(true)
 
 lives = 3
 
@@ -139,6 +175,19 @@ function calibrate_inventory() {
 	show_debug_message("Calibrating Inventory")
 }
 
+// true to increment, false to decrement.
+function change_item_prob(_item_type, _incrdecr) {
+	var _change = _incrdecr ? 1 : -1;
+	show_debug_message(_item_type)
+	show_debug_message(items_list)
+	var _item_type_idx = find_item_type(_item_type, items_list)
+	if (_item_type_idx != -1 and clamp(prob_sum+_change, min_prob_sum, max_prob_sum) == prob_sum+_change) {
+		show_debug_message("I am running");
+		item_probs[_item_type_idx] = clamp(item_probs[_item_type_idx] + _change, PROB_MIN, PROB_MAX)
+		prob_sum += _change;
+	}
+}
+
 function use_item(_i) {
 	var _item_used = false;
 	if (is_instanceof(spaces[player.space], GreySpace)) {
@@ -152,6 +201,24 @@ function use_item(_i) {
 		if (is_instanceof(spaces[player.space], DoubleSpace) and !is_instanceof(player.inventory[_i], Choice)) {
 			array_push(player.repeat_items, player.inventory[_i])
 		}
+		if (player.diminish) {
+			show_debug_message("i am diminish")
+			change_item_prob(player.inventory[_i], false);
+			player.diminish = false;
+		} 
+		if (player.accumulate) {
+			show_debug_message("i am accumulate")
+			change_item_prob(player.inventory[_i], true);
+			var _n = array_length(spaces)
+			var _idx1 = (player.space - 1 + _n) mod _n
+			var _idx2 = (player.space + 1 + _n) mod _n
+			var _new_space = get_random_space([spaces[_idx1], spaces[_idx2], AccumulateSpace, BlindSpace])
+			_new_space.stock_items(false);
+			spaces[player.space] = _new_space;
+			obj_spincard.clear_shop();
+			obj_spincard.calibrate_shop();
+			player.accumulate = false;
+		}
 		player.inventory[_i].use_action(player, spaces);
 		_item_used = true;
 	}
@@ -161,6 +228,11 @@ function use_item(_i) {
 		if (!is_instanceof(player.inventory[_i], Choice)) {
 			array_set(player.inventory, _i, noone)
 			player.remove_choice();
+			player.items_used++;
+			if (player.items_used == array_length(spaces)) {
+				player.items_used = 0;
+				addspace.use_action(player, spaces);
+			}
 			return true;
 		} else {
 			return false;
@@ -219,12 +291,15 @@ function reset_pointer_counts() {
 	}
 }
 
+function is_positive(_element, _index)
+{
+    return _element > 0;
+}
+
 draw_set_font(fnt_default)
 
 
 audio_play_sound(snd_mus_main, 10, true)
 
-addspace = new AddSpace(true)
-show_debug_message(string(instanceof(addspace)));
-
-show_debug_message(string(static_get(method_get_index(AddSpace)).prob))
+draw_set_halign(fa_center)
+draw_set_valign(fa_middle)

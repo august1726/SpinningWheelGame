@@ -17,7 +17,6 @@ function Item(_free) constructor {
 
 function HealthUp(_free) : Item(_free) constructor {
 	static spr = spr_health;
-	static prob = 0;
 	descr = string("Health, Price: {0}\n+1 health if health 4 or less", price)
 	use_action = function(_player, _spaces) {
 		show_debug_message("Health")
@@ -28,7 +27,6 @@ function HealthUp(_free) : Item(_free) constructor {
 
 function AddSpace(_free) : Item(_free) constructor {
 	static spr = spr_add;
-	static prob = 0;
 	descr = string("Plus, Price: {0}\nadd a space to the board", price);
 	use_action = function(_player, _spaces) {
 		show_debug_message("Add Space")
@@ -49,7 +47,6 @@ function AddSpace(_free) : Item(_free) constructor {
 
 function Jetpack(_free) : Item(_free) constructor {
 	static spr = spr_jetpack;
-	static prob = 0;
 	descr = string("Jetpack, Price: {0}\ntravel anywhere on the board", price);
 	use_action = function(_player, _spaces) {
 		show_debug_message("Jet Pack")
@@ -68,7 +65,7 @@ function Vision(_free) : Item(_free) constructor {
 }
 
 function Reroll(_free) : Item(_free) constructor {
-	spr = spr_reroll;
+	static spr = spr_reroll;
 	descr = string("Reroll, Price: {0}\nrandomize adjacent spaces. coins are kept.", price);
 	use_action = function(_player, _spaces) {
 		show_debug_message("Reroll")
@@ -96,16 +93,16 @@ function Reroll(_free) : Item(_free) constructor {
 }
 
 function Delay(_free) : Item(_free) constructor {
-	spr = spr_delay;
-	descr = string("Delay, Price: {0}\n delay next ptr add by 1-2 turns.", price);
+	static spr = spr_delay;
+	descr = string("Delay, Price: {0}\n delay next ptr add by 2 turns.", price);
 	use_action = function(_player, _spaces) {
 		show_debug_message("Delay")
-		_player.next_ptr += irandom_range(1, 2);
+		_player.next_ptr += 2 //irandom_range(1, 2);
 	}
 }
 
 function Blight(_free) : Item(_free) constructor {
-	spr = spr_blight;
+	static spr = spr_blight;
 	price = 0;
 	descr = string("Blight\n-1 health. no effect if used on grey space");
 	use_action = function(_player, _spaces) {
@@ -117,9 +114,9 @@ function Blight(_free) : Item(_free) constructor {
 }
 
 function Intangible(_free) : Item(_free) constructor {
-	spr = spr_intangible;
-	intangible_length = 1;
-	descr = string("Intangible, Price: {0}\ntake no damage for 1 turn.\ndestroy every other intangible", price);
+	static spr = spr_intangible;
+	intangible_length = 2;
+	descr = string("Intangible, Price: {0}\ntake no damage for 2 turns.\ndestroy every other intangible", price);
 	use_action = function(_player, _spaces) {
 		show_debug_message("Intangible")
 		_player.intangible += intangible_length;
@@ -142,7 +139,7 @@ function Intangible(_free) : Item(_free) constructor {
 }
 
 function Magnet(_free) : Item(_free) constructor {
-	spr = spr_magnet;
+	static spr = spr_magnet;
 	descr = string("Magnet, Price: {0}\nCollects coins from the space with the most coins", price);
 	use_action = function(_player, _spaces) {
 		var _max_coins_space = max_coin_space(_spaces);
@@ -164,11 +161,12 @@ function Magnet(_free) : Item(_free) constructor {
 }
 
 function Shelf(_free) : Item(_free) constructor {
-	spr = spr_shelf;
+	static spr = spr_shelf;
 	descr = string("Shelf, Price: {0}\n If space has an item slot, add one extra item slot.", price);
 	use_action = function(_player, _spaces) {
 		var _space = _spaces[_player.space]
-		if (_space.num_items != 0 && _space.num_items == array_length(_space.items)) {
+		// _space.num_items != 0
+		if (_space.num_items == array_length(_space.items)) {
 			array_push(_space.items, noone);
 		}
 		
@@ -176,7 +174,7 @@ function Shelf(_free) : Item(_free) constructor {
 }
 
 function Choice(_free) : Item(_free) constructor {
-	spr = spr_choice;
+	static spr = spr_choice;
 	reusable = true;
 	choose_spaces = noone;
 	idx = false;
@@ -208,7 +206,7 @@ function Choice(_free) : Item(_free) constructor {
 }
 
 function Insurance(_free) : Item(_free) constructor {
-	spr = spr_insurance;
+	static spr = spr_insurance;
 	descr = string("Insurance, Price: {0}\nIf you are hit by a pointer next turns, Take 1 less damage.", price);
 	use_action = function(_player, _spaces) {
 		_player.insurance = true;
@@ -216,29 +214,39 @@ function Insurance(_free) : Item(_free) constructor {
 }
 
 function Shell(_free) : Item(_free) constructor {
-	spr = spr_turtle;
+	static spr = spr_turtle;
 	descr = string("Shell, Price: {0}\nreduce all damage by pointers to 1 next turn", price);
 	use_action = function(_player, _spaces) {
-		show_debug_message("Jet Pack")
+		show_debug_message("Shell")
 		_player.shell = true;
 	}
 }
 
 function Inspect(_free) : Item(_free) constructor {
-	spr = spr_inspect;
+	static spr = spr_inspect;
 	descr = string("Jetpack, Price: {0}\ntravel anywhere on the board", price);
 	use_action = function(_player, _spaces) {
-		show_debug_message("Jet Pack")
+		show_debug_message("Inspect")
 		_player.inspect = true;
 	}
 }
 
 function Reset(_free) : Item(_free) constructor {
-	spr = spr_reset;
+	static spr = spr_reset;
 	descr = string("Reset, Price: {0}\nPointers reset all items for the spaces they land on next turn.", price);
 	use_action = function(_player, _spaces) {
-		show_debug_message("Jet Pack")
+		show_debug_message("Reset")
 		_player.reset_items = true;
 	}
 }
+
+function Diminish(_free) : Item(_free) constructor {
+	static spr = spr_diminish;
+	descr = string("Diminish, Price: {0}\nNext item used this turn will have a decreased probability of showing up on the board. Intangible & Choice not included.", price);
+	use_action = function(_player, _spaces) {
+		show_debug_message("Diminish")
+		_player.diminish = true;
+	}
+}
+
 

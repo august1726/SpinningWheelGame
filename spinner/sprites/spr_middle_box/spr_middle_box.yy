@@ -26,7 +26,7 @@
   "origin":4,
   "parent":{
     "name":"menu_icons",
-    "path":"folders/Sprites/menu_icons.yy",
+    "path":"folders/Sounds/Sprites/menu_icons.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

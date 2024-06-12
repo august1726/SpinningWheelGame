@@ -50,15 +50,6 @@ function initiate_turn() {
 	}
 }
 
-//function show_pointers() {
-//	for (var _i = 0; _i < array_length(pointer_dirs); _i++) {
-//		var _space_idx = get_triangle_space(pointer_dirs[_i], section, array_length(spaces)) //clamp(pointer_dirs[_i] div section, 0, array_length(spaces)-1)
-//		if (!array_contains(warning_list, _space_idx) and random(1) < player.sight_prob) {
-//			array_push(warning_list, _space_idx);
-//		}
-//	}
-//}
-
 function player_turn(){
 	
 	if mouse_check_button_pressed(mb_left) {
@@ -73,6 +64,7 @@ function player_turn(){
 				
 				if (!_stayed and is_instanceof(_space, SwapSpace)) {
 					swap_spaces(_space, spaces)
+					obj_spincard.calculate_pointers();
 				}
 				
 				if (!is_instanceof(spaces[player.space], FreezeSpace)) {

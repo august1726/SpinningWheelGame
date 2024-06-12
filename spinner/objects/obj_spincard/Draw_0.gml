@@ -70,20 +70,6 @@ for (var _space = 0; _space < array_length(spaces); _space++) {
 		draw_sprite_ext(spr_warning,  0, _warning_x, _warning_y, 1, 1, _warning_dir, c_white, 1)
 	}
 	
-	// inspect display
-	if (player.inspect and state = STATES.PLAYER_TURN) {
-		if (get_wrap_dist(player.space, _space, array_length(spaces)) <= 1) {
-			var _warning_dir = section * (_space + .5)
-			var _inspect_x = x + lengthdir_x(SPACING*5, _warning_dir)
-			var _inspect_y = y + lengthdir_y(SPACING*5, _warning_dir)
-			draw_set_alpha(0.5);
-			draw_sprite(spr_inspect_display,  0, _inspect_x, _inspect_y)
-			draw_set_color(c_black)
-			draw_text(_inspect_x , _inspect_y, string(space.num_pointers));
-			draw_set_color(c_white)
-			draw_set_alpha(1);
-		}
-	}
 }
 
 
@@ -131,6 +117,21 @@ for (var _space = 0; _space < array_length(spaces); _space++) {
 	draw_set_color(c_black)
 	draw_text(_coin_x, _coin_y, string(space.coins));
 	draw_set_color(c_white)
+	
+	// inspect display
+	if (player.inspect and state = STATES.PLAYER_TURN) {
+		if (get_wrap_dist(player.space, _space, array_length(spaces)) <= 1) {
+			var _warning_dir = section * (_space + .5)
+			var _inspect_x = x + lengthdir_x(SPACING*4.5, _warning_dir)
+			var _inspect_y = y + lengthdir_y(SPACING*4.5, _warning_dir)
+			draw_set_alpha(0.5);
+			draw_sprite(spr_inspect_display,  0, _inspect_x, _inspect_y)
+			draw_set_color(c_black)
+			draw_text(_inspect_x , _inspect_y, string(space.num_pointers));
+			draw_set_color(c_white)
+			draw_set_alpha(1);
+		}
+	}
 }
 
 draw_set_color(c_yellow)
@@ -187,8 +188,8 @@ if (state != STATES.CHOOSE_START and state != STATES.DEATH) {
 draw_self()
 
 draw_text(obj_ptrtimer.x + obj_ptrtimer.sprite_width/2, obj_ptrtimer.y + obj_ptrtimer.sprite_height/2, string("Add pointer in {0}", player.next_ptr));
-draw_text(obj_ptrcount.x + obj_ptrcount.sprite_width/2, obj_ptrcount.y + obj_ptrcount.sprite_height/2, string("{0} pointers", array_length(pointer_dirs)));
-draw_text(obj_turndisp.x + obj_turndisp.sprite_width/2, obj_turndisp.y + obj_turndisp.sprite_height/2, string("{0} spaces",  array_length(spaces)));
+draw_text(obj_ptrcount.x + obj_ptrcount.sprite_width/2, obj_ptrcount.y + obj_ptrcount.sprite_height/2, string("{0}P, {1}S", array_length(pointer_dirs), array_length(spaces)));
+draw_text(obj_turndisp.x + obj_turndisp.sprite_width/2, obj_turndisp.y + obj_turndisp.sprite_height/2, string("{0} items to use",  array_length(spaces) - player.items_used));
 draw_text(x, y, string("{0}", win_threshold-turn_num));
 draw_text(obj_statedisp.x + obj_statedisp.sprite_width/2, obj_statedisp.y + obj_statedisp.sprite_height/2, state_descrs[state]);
 draw_text(obj_shopsign.x + obj_shopsign.sprite_width/2, obj_shopsign.y + obj_shopsign.sprite_height/2, string("Shop"));

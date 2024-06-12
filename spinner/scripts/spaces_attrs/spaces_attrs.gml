@@ -28,7 +28,7 @@ function Space() constructor {
 	static stock_items = function(_reset_items) {
 		for (var _i = 0; _i < array_length(items); _i++) {
 			if(items[_i] == noone or _reset_items) {
-				var _item_type = obj_spincard.items_list[irandom_range(0, array_length(obj_spincard.items_list)-1)];
+				var _item_type = obj_spincard.random_item();
 				items[_i] = new _item_type(is_instanceof(self, OrangeSpace) && _i == 0);
 			}
 		}
@@ -119,7 +119,7 @@ function DoubleSpace() : Space() constructor {
 }
 
 function IntangibleSpace() : Space() constructor {
-	colors = [c_blue, c_red];
+	colors = [c_navy, c_blue, c_red];
 	num_items = 1;
 	items = array_create(num_items, noone)
 	descr = "Intangible Space:\n Contains Intangible."
@@ -153,7 +153,7 @@ function FreezeSpace() : Space() constructor {
 	colors = [c_white, c_teal];
 	num_items = 1;
 	items = array_create(num_items, noone)
-	descr = "Freeze Space:\n Pointers will not activate on this space. Turn counter will not progress on this space. Item buffs will still ware off."
+	descr = "Freeze Space:\n While on space, pointers will not activate, and turn counter will not progress. Item buffs will still ware off."
 }
 
 function SwapSpace() : Space() constructor {
@@ -163,5 +163,15 @@ function SwapSpace() : Space() constructor {
 	descr = "Swap Space:\n Swaps position with another randoms space after leaving."
 	static player_action = function(_player, _spaces) {
 		_player.swap_space = self
+	}
+}
+
+function AccumulateSpace() : Space() constructor {
+	colors = [c_white, c_red, c_blue, c_green]
+	num_items = 0;
+	items = array_create(num_items, noone)
+	descr = "Accumulate Space:\n This space is changed into another space upon item use. Items used in this space have an increased probability of showing up on the board."
+	static player_action = function(_player, _spaces) {
+		_player.accumulate = true
 	}
 }

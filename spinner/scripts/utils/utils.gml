@@ -29,19 +29,6 @@ function draw_triangle_custom(_x1, _y1, _x2, _y2, _x3, _y3, _col, _line_width, _
   }
 }
 
-//function shift_val(_col) {
-//	return make_color_hsv(color_get_hue(_col), color_get_saturation(_col), color_get_value(_col) / 3);
-//}
-
-//function get_random_space(_space1, _space2, _space3=_space2) {
-//	space_type = noone;
-//	do {
-//		space_type = obj_spincard.spaces_list[irandom_range(0, array_length(obj_spincard.spaces_list)-1)];
-//	}
-//	until (!is_instanceof(_space1, space_type) and !is_instanceof(_space2, space_type) and !is_instanceof(_space3, space_type));
-//	return new space_type();
-//};
-
 function get_random_space(_spaces) {
 	space_type = noone;
 	do {
@@ -51,13 +38,22 @@ function get_random_space(_spaces) {
 	return new space_type();
 };
 
-function is_one_of_space(_space_type, _spaces) {
+function is_one_of_space(_type, _spaces) {
 	for (var _i = 0; _i < array_length(_spaces); _i++) {
-		if (is_instanceof(_spaces[_i], _space_type)) {
+		if (is_instanceof(_spaces[_i], _type)) {
 			return true;
 		}
 	}
 	return false;
+}
+
+function find_item_type(_item, _types) {
+	for (var _i = 0; _i < array_length(_types); _i++) {
+		if (is_instanceof(_item, _types[_i])) {
+			return _i;
+		}
+	}
+	return -1;
 }
 
 function draw_how_to_play(_x1 = room_width/30, _y1 = room_height/12, _x2 = room_width - _x1, _y2 = room_height - _y1) {
@@ -88,4 +84,8 @@ function get_triangle_space(_dir, _section, _num_spaces) {
 		}
 	}
 	return 0
+}
+
+function display_probs() {
+	
 }

@@ -26,7 +26,7 @@
   "origin":4,
   "parent":{
     "name":"item_icons",
-    "path":"folders/Sprites/item_icons.yy",
+    "path":"folders/Sounds/Sprites/item_icons.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

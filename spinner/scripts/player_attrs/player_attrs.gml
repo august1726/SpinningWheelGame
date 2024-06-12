@@ -16,6 +16,9 @@ function Player() constructor {
 	reset_items = false;
 	repeat_items = array_create(0)
 	swap_space = noone;
+	diminish = false;
+	accumulate = false
+	items_used = 0;
 	static reset_countdown = function() {
 		next_ptr = countdown_length;
 	}
@@ -78,5 +81,7 @@ function Player() constructor {
 		insurance = false;
 		reset_items = false;
 		movement = def_movement;
+		diminish = false;
+		accumulate = false;
 	}
 }
