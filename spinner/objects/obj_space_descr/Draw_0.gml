@@ -9,7 +9,7 @@ if (col == c_orange or col == c_yellow) {
 
 draw_set_halign(fa_center)
 draw_set_valign(fa_middle)
-draw_text_ext_color(x + sprite_width/2, y + sprite_height/2, text, 15, sprite_width, col, col, col, col, 1)
+draw_text_ext_color(x + sprite_width/2, y + sprite_height/2, text, 12, sprite_width, col, col, col, col, 1)
 
 
 

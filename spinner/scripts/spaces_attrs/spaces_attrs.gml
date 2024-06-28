@@ -37,6 +37,8 @@ function Space() constructor {
 
 function RedSpace() : Space() constructor {
 	colors = [c_red];
+	static count = 0;
+	count++;
 	descr = "Red Space\ntake damage upon entering. gold drops on this square doubled."
 	static player_action = function(_player, _spaces = noone) {
 		_player.take_damage();
@@ -50,6 +52,8 @@ function RedSpace() : Space() constructor {
 function OrangeSpace() : Space() constructor {
 	colors = c_orange;
 	num_items = 1;
+	static count = 0;
+	count++;
 	items = array_create(num_items, noone)
 	descr = "Orange Space\ncontains one free item. gold drops on this square halved."
 	static pointer_action = function() {
@@ -60,12 +64,16 @@ function OrangeSpace() : Space() constructor {
 function YellowSpace() : Space() constructor {
 	colors = c_yellow;
 	num_items = 2;
+	static count = 0;
+	count++;
 	items = array_create(num_items, noone)
 	descr = "Yellow Space\ncontains 1 extra item for sale"
 }
 
 function GreenSpace() : Space() constructor {
 	colors = c_green;
+	static count = 0;
+	count++;
 	descr = "Green Space\ngain 1 health upon entering if health is 2 or less."
 	static player_action = function(_player, _spaces = noone) {
 		if (lives <= HEAL_MAX) {
@@ -77,6 +85,8 @@ function GreenSpace() : Space() constructor {
 
 function BlueSpace() : Space() constructor {
 	colors = c_blue;
+	static count = 0;
+	count++;
 	descr = "Blue Space\nsee all dangerous spaces for next turn"
 	static player_action = function(_player) {
 		_player.vision = true;
@@ -85,6 +95,8 @@ function BlueSpace() : Space() constructor {
 
 function PurpleSpace() : Space() constructor {
 	colors = c_purple;
+	static count = 0;
+	count++;
 	descr = "Purple Space\ntravel up to 2 adjacent spaces, rather than just 1"
 	static player_action = function(_player) {
 		_player.movement = 2;
@@ -93,11 +105,15 @@ function PurpleSpace() : Space() constructor {
 
 function GreySpace() : Space() constructor {
 	colors = c_grey;
+	static count = 0;
+	count++;
 	descr = "Disable Space:\n Only blight can be used on this space."
 }
 
 function HospitalSpace() : Space() constructor {
 	colors = [c_red, c_white, c_green];
+	static count = 0;
+	count++;
 	descr = "Hospital Space:\n Gives a blight (damage 1), then a heart (heal 1) to player."
 	static player_action = function(_player, _spaces = noone) {
 		if (array_contains(_player.inventory, noone)) {
@@ -115,6 +131,8 @@ function DoubleSpace() : Space() constructor {
 	colors = c_fuchsia;
 	num_items = 0;
 	items = array_create(num_items, noone)
+	static count = 0;
+	count++;
 	descr = "Double Space:\n Items used on this space will be activated again on the following turn."
 }
 
@@ -122,6 +140,8 @@ function IntangibleSpace() : Space() constructor {
 	colors = [c_navy, c_blue, c_red];
 	num_items = 1;
 	items = array_create(num_items, noone)
+	static count = 0;
+	count++;
 	descr = "Intangible Space:\n Contains Intangible."
 	static stock_items = function() {
 		for (var _i = 0; _i < array_length(items); _i++) {
@@ -136,6 +156,7 @@ function BlindSpace() : Space() constructor {
 	colors = [c_red, c_orange, c_yellow, c_green, c_blue, c_purple, c_white];
 	num_items = 0;
 	items = array_create(num_items, noone)
+	static count = 0;
 	descr = "Choice Space:\n Gives an item which allows choosing between two spaces."
 	static player_action = function(_player, _spaces) {
 		
@@ -153,6 +174,8 @@ function FreezeSpace() : Space() constructor {
 	colors = [c_white, c_teal];
 	num_items = 1;
 	items = array_create(num_items, noone)
+	static count = 0;
+	count++;
 	descr = "Freeze Space:\n While on space, pointers will not activate, and turn counter will not progress. Item buffs will still ware off."
 }
 
@@ -160,6 +183,8 @@ function SwapSpace() : Space() constructor {
 	colors = [c_lime, c_olive, c_olive, c_lime]
 	num_items = 1;
 	items = array_create(num_items, noone)
+	static count = 0;
+	count++;
 	descr = "Swap Space:\n Swaps position with another randoms space after leaving."
 	static player_action = function(_player, _spaces) {
 		_player.swap_space = self
@@ -170,6 +195,7 @@ function AccumulateSpace() : Space() constructor {
 	colors = [c_white, c_red, c_blue, c_green]
 	num_items = 0;
 	items = array_create(num_items, noone)
+	static count = 0;
 	descr = "Accumulate Space:\n This space is changed into another space upon item use. Items used in this space have an increased probability of showing up on the board."
 	static player_action = function(_player, _spaces) {
 		_player.accumulate = true

@@ -32,7 +32,7 @@ switch(gamemode) {
 	case GAMEMODES.NORMAL:
 		win_threshold = 40
 		spaces_list = [RedSpace, OrangeSpace, YellowSpace, GreenSpace, BlueSpace, PurpleSpace];
-		items_list = [HealthUp, AddSpace, AddSpace, Jetpack, Vision, Reroll, Delay];
+		items_list = [HealthUp, AddSpace, Jetpack, Vision, Reroll, Delay];
 		num_start_spaces = 5;
 		num_start_pointers = 1;
 		max_spaces = 30
@@ -176,11 +176,11 @@ function calibrate_inventory() {
 }
 
 // true to increment, false to decrement.
-function change_item_prob(_item_type, _incrdecr) {
+function change_item_prob(_item, _incrdecr) {
 	var _change = _incrdecr ? 1 : -1;
-	show_debug_message(_item_type)
+	show_debug_message(_item)
 	show_debug_message(items_list)
-	var _item_type_idx = find_item_type(_item_type, items_list)
+	var _item_type_idx = find_type(_item, items_list)
 	if (_item_type_idx != -1 and clamp(prob_sum+_change, min_prob_sum, max_prob_sum) == prob_sum+_change) {
 		show_debug_message("I am running");
 		item_probs[_item_type_idx] = clamp(item_probs[_item_type_idx] + _change, PROB_MIN, PROB_MAX)
@@ -190,14 +190,17 @@ function change_item_prob(_item_type, _incrdecr) {
 
 function use_item(_i) {
 	var _item_used = false;
+	var _blight_on_grey = false;
 	if (is_instanceof(spaces[player.space], GreySpace)) {
 		if (is_struct(player.inventory[_i]) and is_instanceof(player.inventory[_i], Blight)) {
-			_item_used = true;
+			_blight_on_grey = true;
 		}
-		if (is_struct(player.inventory[_i]) and is_instanceof(player.inventory[_i], Choice)) {
-			_item_used = true;
-		}
-	} else {
+	}
+	//	if (is_struct(player.inventory[_i]) and is_instanceof(player.inventory[_i], Choice)) {
+	//		_item_used = true;
+	//	}
+	//} else 
+	{
 		if (is_instanceof(spaces[player.space], DoubleSpace) and !is_instanceof(player.inventory[_i], Choice)) {
 			array_push(player.repeat_items, player.inventory[_i])
 		}
@@ -219,7 +222,9 @@ function use_item(_i) {
 			obj_spincard.calibrate_shop();
 			player.accumulate = false;
 		}
-		player.inventory[_i].use_action(player, spaces);
+		if (!_blight_on_grey) {
+			player.inventory[_i].use_action(player, spaces);
+		}
 		_item_used = true;
 	}
 	
@@ -296,10 +301,11 @@ function is_positive(_element, _index)
     return _element > 0;
 }
 
-draw_set_font(fnt_default)
+game_font = font_add("MercutioNbpBasic-2rLv.ttf", 12, false, false, 32, 128);
+draw_set_font(game_font)
 
 
-audio_play_sound(snd_mus_main, 10, true)
+//audio_play_sound(snd_mus_main, 10, true)
 
 draw_set_halign(fa_center)
 draw_set_valign(fa_middle)

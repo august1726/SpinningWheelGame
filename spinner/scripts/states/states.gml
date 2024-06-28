@@ -78,7 +78,17 @@ function player_turn(){
 	}
 	
 	if mouse_check_button_pressed(mb_right) {
-		addspace.use_action(player, spaces);
+		var _list = []
+		for (var _i = 0; _i < array_length(spaces); _i++) {
+			array_push(_list, find_type(spaces[_i], spaces_list));
+		}
+		
+		_list = array_unique(_list)
+		
+		for (var _i = 0; _i < array_length(_list); _i++) {
+			array_push(_list, (_list[_i]));
+		}
+		
 	}
 }
 

@@ -22,7 +22,11 @@
     {"$GMFolder":"","%Name":"menu_icons","folderPath":"folders/Sounds/Sprites/menu_icons.yy","name":"menu_icons","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"ui_icons","folderPath":"folders/Sounds/Sprites/ui_icons.yy","name":"ui_icons","resourceType":"GMFolder","resourceVersion":"2.0",},
   ],
-  "IncludedFiles":[],
+  "IncludedFiles":[
+    {"$GMIncludedFile":"","%Name":"MercutioNbpBasic-2rLv.ttf","CopyToMask":-1,"filePath":"datafiles","name":"MercutioNbpBasic-2rLv.ttf","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
+    {"$GMIncludedFile":"","%Name":"PocketPixelRegular.ttf","CopyToMask":-1,"filePath":"datafiles","name":"PocketPixelRegular.ttf","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
+    {"$GMIncludedFile":"","%Name":"PressStart2P-Regular.ttf","CopyToMask":-1,"filePath":"datafiles","name":"PressStart2P-Regular.ttf","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
+  ],
   "isEcma":false,
   "LibraryEmitters":[],
   "MetaData":{
@@ -103,10 +107,10 @@
   "resourceType":"GMProject",
   "resourceVersion":"2.0",
   "RoomOrderNodes":[
+    {"roomId":{"name":"rm_game","path":"rooms/rm_game/rm_game.yy",},},
     {"roomId":{"name":"rm_start","path":"rooms/rm_start/rm_start.yy",},},
     {"roomId":{"name":"rm_start_menu","path":"rooms/rm_start_menu/rm_start_menu.yy",},},
     {"roomId":{"name":"rm_howto","path":"rooms/rm_howto/rm_howto.yy",},},
-    {"roomId":{"name":"rm_game","path":"rooms/rm_game/rm_game.yy",},},
     {"roomId":{"name":"rm_win","path":"rooms/rm_win/rm_win.yy",},},
     {"roomId":{"name":"rm_lose","path":"rooms/rm_lose/rm_lose.yy",},},
   ],

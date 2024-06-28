@@ -47,9 +47,9 @@ function is_one_of_space(_type, _spaces) {
 	return false;
 }
 
-function find_item_type(_item, _types) {
+function find_type(_thing, _types) {
 	for (var _i = 0; _i < array_length(_types); _i++) {
-		if (is_instanceof(_item, _types[_i])) {
+		if (is_instanceof(_thing, _types[_i])) {
 			return _i;
 		}
 	}
